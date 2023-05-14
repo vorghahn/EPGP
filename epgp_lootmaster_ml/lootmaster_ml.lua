@@ -1235,6 +1235,8 @@ function LootMasterML:AddCandidate( loot, candidate )
           {["name"]       = 'EP',
           ["value"]      = self.GetEP,
           ["userDraw"]   = addon.SetCellEPGPNumberFormatted,
+		  ["color"]      = self.GetCandidateEPCellColor,
+		  ["colorargs"]  = {self, candidate, itemID},		  
           ["args"]       = {self, candidate, self.GetEP}},
 
           {["name"]       = 'GP',

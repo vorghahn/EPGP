@@ -215,6 +215,19 @@ local decode_class = {
 ["WARRIOR"]="WARRIOR"
 }
 
+local encode_class = {
+["DEATHKNIGHT"]="de",
+["DRUID"]="dr",
+["HUNTER"]="h",
+["MAGE"]="m",
+["PALADIN"]="pa",
+["PRIEST"]="pr",
+["ROGUE"]="r",
+["SHAMAN"]="s",
+["WARLOCK"]="lo",
+["WARRIOR"]="wa",
+}
+
 local function DecodeNote(note)
   if note then
     if note == "" then
@@ -262,7 +275,7 @@ local function EncodeNote(ep, gp, alt)
 						   math.max(ep, 0),
 						   math.max(gp - global_config.base_gp, 0),
 						   alt,
-						   oog_alts[alt]["class"])
+						   encode_class[oog_alts[alt]["class"]])
   end
 end
 

@@ -1158,6 +1158,14 @@ function LootMasterML:SetCandidateRollCellUserDraw( cell, self, candidate, item 
     end
 end
 
+function LootMasterML:GetCandidateEPCellColor(candidate, item, dataName, defaultColor)
+	if self:GetMinEPMatch(candidate)~='y' then
+		return {["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1.0}
+	else
+		return epgpColor
+	end
+end
+
 function LootMasterML:HideGearCellPopup( candidate, item, dataName )
     GameTooltip:Hide()
 end
