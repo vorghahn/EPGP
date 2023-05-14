@@ -9,7 +9,7 @@
 
 LootMaster          = LibStub("AceAddon-3.0"):NewAddon("EPGPLootMaster", "AceConsole-3.0", "AceComm-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceHook-3.0")
 
-local version 	    = "0.4.9.335.3"
+local version 	    = "0.4.9.335.4"
 local dVersion 	    = "2023-05-19T05:41:40Z"
 local iVersion	    = 3
 local iVersionML	  = 11
@@ -224,6 +224,52 @@ local function EmulateLocal_CHAT_MSG_LOOT( player, item )
     EmulateLocal_CHAT_MSG_LOOT_proc( player, item, GetFramesRegisteredForEvent('CHAT_MSG_LOOT') )
 end
 
+function LootMaster:BagHandler( lootLink )
+    if lootLink then
+
+        if not LootMasterML then return self:Print('Could not add loot, ML module not active') end
+        ml = LootMasterML;
+
+        local loot = ml.GetLoot(ml, lootLink);
+        local added = false
+        if not loot then
+            local lootID = ml.AddLoot(ml, lootLink, true);
+            loot = ml.GetLoot(ml, lootID);
+            loot.announced = false;
+            loot.manual = true;
+            added = true;
+        end
+        if not loot then return self:Print('Unable to register loot.') end;
+
+        local num = GetNumRaidMembers()
+        local name = nil;
+        if num>0 then
+            -- we're in raid
+            for i=1, num do
+                name = GetRaidRosterInfo(i)
+                ml.AddCandidate(ml, loot.id, name)
+            end
+        else
+            num = GetNumPartyMembers()
+            for i=1, num do
+                name = UnitName('party'..i)
+                ml.AddCandidate(ml, loot.id, name)
+            end
+            ml.AddCandidate(ml, loot.id, UnitName('player'))
+        end
+
+        if command=='announce' then
+            ml.AnnounceLoot(ml, loot.id)
+        end
+
+        if added then
+            ml.SendCandidateListToMonitors(ml, loot.id)
+        end
+
+        ml.ReloadMLTableForLoot( ml, loot.link )
+	end
+end
+
 function LootMaster:SlashHandler( input )
 	local _,_,command, args = string.find( input, "^(%a-) (.*)$" )
 	command = command or input
@@ -241,7 +287,16 @@ function LootMaster:SlashHandler( input )
             self:Print('Debugging disabled')
         end
 
-  elseif command=='raidinfo' or command=='ri' or command=='saved' or command=='lock' then
+	elseif command=='bag' then
+
+        if not LootMasterML then
+            self:Print('Please enable the lootmaster ML module.')
+            return
+        end
+		--todo
+		LootMasterML:EPGP_DFB_slasher()
+		
+    elseif command=='raidinfo' or command=='ri' or command=='saved' or command=='lock' or command=='bag' then
 
         if not LootMasterML then
             self:Print('Please enable the lootmaster ML module.')
@@ -448,6 +503,7 @@ function LootMaster:SlashHandler( input )
         self:Print( '/lm toggle: Manually toggle between showing and hiding the Master Looter UI' )
         self:Print( '/lm add [itemlink]: Manually add an item to the Master Looter UI' )
         self:Print( '/lm announce [itemlink]: Manually add an item and announce it to your group.' )
+		self:Print( '/lm bag: Opens a window that allows looting from bags.' )
 
 	end
 end

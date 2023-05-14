@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: EPGP LootMaster - |cFFFF8080ML|r
 ## Author: Bushmaster-Twisting Nether-EU
-## Version: 0.4.9.335.3
+## Version: 0.4.9.335.4
 ## Notes: Full loot distributing system for EPGP - Master Looter Stuff - Players can disable this safely.
 ## X-Category: Guild
 ## RequiredDeps: epgp_lootmaster
@@ -12,7 +12,10 @@
 ## X-Curse-Project-Name: EPGPLootmaster
 ## X-Curse-Project-ID: epgp_lootmaster
 ## X-Curse-Repository-ID: wow/epgp_lootmaster/mainline
+## SavedVariables: EPGP_DFB_No_Trade, EPGP_DFB_Enabled
 lootmaster_ml.lua
 lootmaster_ml_ui.lua
 lootmaster_options_buttonwidget.lua
 lootmaster_options.lua
+dfb_Frame.xml
+

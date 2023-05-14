@@ -582,7 +582,7 @@ function LootMaster:VersionActionClick(name)
     local rowID = self.versioncheckframe.members[name];
     if not rowID then return end;
     if self.versioncheckframe.rows[rowID].cols[3].value == 0 then
-        SendChatMessage("Auto message: please install EPGPLootmaster from curse.com:  http://wow.curse.com/downloads/wow-addons/details/epgp_lootmaster.aspx", "WHISPER", nil, name);
+        SendChatMessage("Auto message: please install EPGPLootmaster from discord", "WHISPER", nil, name); --curse.com:  http://wow.curse.com/downloads/wow-addons/details/epgp_lootmaster.aspx", "WHISPER", nil, name);
     end
 end
 

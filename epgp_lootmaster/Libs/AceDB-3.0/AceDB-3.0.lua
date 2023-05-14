@@ -250,7 +250,7 @@ local preserve_keys = {
 }
 
 local realmKey = GetRealmName()
-local charKey = UnitName("player") .. " - " .. realmKey
+local charKey = realmKey--UnitName("player") .. " - " .. realmKey
 local _, classKey = UnitClass("player")
 local _, raceKey = UnitRace("player")
 local factionKey = UnitFactionGroup("player")

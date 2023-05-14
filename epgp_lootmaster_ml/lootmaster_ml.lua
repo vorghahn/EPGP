@@ -18,6 +18,18 @@ local mathRandom            = math.random
 local mathFloor             = math.floor
 local mathCachedRandomSeed  = math.random()*1000
 
+--dfb globals
+EPGP_DFB_Addon = addon
+EPGP_DFB_LoadedAddon = false
+EPGP_DFB_LastTime = 0
+EPGP_DFB_LastLink = nil
+EPGP_DFB_Distributing = false
+EPGP_DFB_DistPlayerBtn = nil
+EPGP_DFB_IsAnnounced = false
+EPGP_DFB_distItemLink = nil
+EPGP_DFB_BagId = 0
+EPGP_DFB_SlotId = 0
+EPGP_DFB_Enabled = true
 
 StaticPopupDialogs["EPGPLOOTMASTER_ASK_TRACKING"] = {
 	text = '- - - - EPGPLootmaster - - - -\r\n\r\nYou are the loot master, would you like to use EPGPLootmaster to distribute loot?\r\n\r\n(You will be asked again next time. Use /lm config to change this behaviour)',
@@ -47,6 +59,7 @@ function LootMasterML:Debug( message, verbose )
     self:Print("debug: " .. message)
 end
 
+
 function LootMasterML:OnInitialize()
 
     self.lootTable = {}			-- a table to store loot info
@@ -69,6 +82,14 @@ function LootMasterML:OnInitialize()
     self:RegisterEvent("PLAYER_REGEN_ENABLED",      "LeaveCombat");
 
     self:RegisterEvent("GUILD_ROSTER_UPDATE",       "CacheGuildInfo")
+	
+	-- DFB Events
+	local dfb_frame = CreateFrame("Frame")
+	dfb_frame:RegisterEvent("VARIABLES_LOADED")
+	dfb_frame:RegisterEvent("ADDON_LOADED")
+	dfb_frame:RegisterEvent("ITEM_LOCKED")
+
+	dfb_frame:SetScript("OnEvent", EPGP_DFB_OnEvent)
 
     -- Register communications
     self:RegisterComm("EPGPLootMasterML", 		    "CommandReceived")
@@ -1967,4 +1988,97 @@ function LootMasterML:OPEN_MASTER_LOOT_LIST()
         self:SendCandidateListToMonitors( lootID )
     end;
 
+end
+
+function LootMasterML:EPGP_DFB_toggle()
+    if EPGP_DFB_Enabled then
+		EPGP_DFB_Enabled= false;
+	else  
+		EPGP_DFB_Enabled = true;
+	end
+end
+
+function LootMasterML:EPGP_DFB_slasher()
+	if not EPGP_DFB_frame:IsShown() then
+		ShowUIPanel(EPGP_DFB_frame)
+		OpenAllBags()
+	else
+		HideUIPanel(EPGP_DFB_frame)
+	end
+end
+
+function LootMasterML:EPGP_DFB_init()
+	_G["EPGP_DFB_frame_text"]:SetText("Shift-Drag an item in inventory to start loot distribution process.")
+		EPGP_DFB_frame:SetScript("OnHide", function()
+			EPGP_DFB_LastTime = 0
+			EPGP_DFB_LastLink = nil
+			EPGP_DFB_Distributing = false
+			EPGP_DFB_DistPlayerBtn = nil
+			EPGP_DFB_IsAnnounced = false
+		end)
+end
+-- Button: Select/Remove Item
+function LootMasterML:BtnSelectItem(btn)
+	_G["EPGP_DFB_frame_text"]:SetText("clicked")
+	if EPGP_DFB_frame:IsShown() then --and not EPGP_DFB_DistPlayerBtn then --and IsShiftKeyDown() then
+		EPGP_DFB_BagId = arg1
+		EPGP_DFB_SlotId = arg2
+		if not EPGP_DFB_BagId or not EPGP_DFB_SlotId then return end
+		if arg2 ~= nil then  -- not equipment items
+			ClearCursor()
+			_, _, _, _, _, _, itemLink = GetContainerItemInfo(EPGP_DFB_BagId, EPGP_DFB_SlotId)
+			if itemLink then
+				EPGP_DFB_print(itemLink, 1);
+				EPGP_DFB_LootFrame_Update(itemLink)
+			end
+		end
+	end
+end
+
+function EPGP_DFB_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5)
+	if event == "ADDON_LOADED" and arg1 == EPGP_DFB_Addon and EPGP_DFB_LoadedAddon == false then
+        self:UnregisterEvent("ADDON_LOADED")
+        EPGP_DFB_LoadedAddon = true
+		EPGP_DFB_init()
+	elseif event == "ITEM_LOCKED" then
+		if EPGP_DFB_frame:IsShown() then
+			EPGP_DFB_BagId = arg1
+			EPGP_DFB_SlotId = arg2
+			if not EPGP_DFB_BagId or not EPGP_DFB_SlotId then return end
+			if arg2 ~= nil then  -- not equipment items
+				dfb_frameName = "EPGP_DFB_frame"
+				_G[dfb_frameName.."_loot"]:SetScript("OnClick", function()
+					_, _, _, _, _, _, itemLink = GetContainerItemInfo(EPGP_DFB_BagId, EPGP_DFB_SlotId)
+					if itemLink then
+						EPGP_DFB_print(itemLink, nil);
+						LootMasterML:EPGP_DFB_LootFrame_Update(itemLink)
+					end
+					ClearCursor()
+				end)
+				_, _, _, _, _, _, itemLink = GetContainerItemInfo(EPGP_DFB_BagId, EPGP_DFB_SlotId)
+			end
+		end
+	end
+end
+
+function LootMasterML:EPGP_DFB_LootFrame_Update(itemLink)
+	if GetLootMethod() ~= "master" then
+		EPGP_DFB_print("The loot method is not Master Looter", 1);
+		return
+	end
+	
+	local items = {};
+    
+    itemName, _, itemRarity, _, _, _, _, _,_, itemIcon, _, _, _, _, _, _, _ = GetItemInfo(itemLink) 
+	if itemName == nil then return; end
+	LootMaster:BagHandler(itemLink)
+end
+
+function EPGP_DFB_print(str, err)
+	if not str then return; end;
+	if err == nil then
+		LootMaster:Print(tostring(str))
+	else
+		LootMaster:Print("|c00FF0000Error|r|c00FFF569 - " .. tostring(str));
+	end
 end
