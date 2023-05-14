@@ -17,6 +17,7 @@ local sstScrollCols = {
        { ["name"] = "C.",	        	  ["width"] = 20,  ["align"] = "CENTER" },
        { ["name"] = "Candidate",		  ["width"] = 100, ["align"] = "LEFT" },
        { ["name"] = "Rank",     		  ["width"] = 100, ["align"] = "LEFT" },
+	   { ["name"] = "Main",		  		["width"] = 100, ["align"] = "LEFT" },
        { ["name"] = "Response",		    ["width"] = 210, ["align"] = "LEFT", 	  ["defaultsort"] = "desc", ["sort"] = "desc", ["color"] = {["r"] = 0.25, ["g"] = 1.00, ["b"] = 0.25, ["a"] = 1.0 }, ["sortnext"]=10 }, --,
        { ["name"] = "EP",		          ["width"] = 50,  ["align"] = "RIGHT",   ["color"] = epgpColor},
        { ["name"] = "GP",		          ["width"] = 50,  ["align"] = "RIGHT",   ["color"] = epgpColor},
@@ -160,7 +161,7 @@ function LootMasterML:GetFrame()
 
     local titletext = titleFrame:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
 	titletext:SetPoint("CENTER",titleFrame,"CENTER",0,1)
-	titletext:SetText( string.format("EPGPLootMaster %s by Bushmaster <Steel Alliance> - Twisting Nether EU", self:GetVersionString() ) )
+	titletext:SetText( string.format("EPGPLootMaster %s by Bushmaster (Modified by Verlange - Icecrown Warmane)", self:GetVersionString() ) )
     titleFrame.titletext = titletext
     frame.titleFrame = titleFrame
     --#endregion
@@ -1546,7 +1547,7 @@ function LootMasterML:ShowRaidInfoLookup()
 
         local titletext = titleFrame:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
         titletext:SetPoint("CENTER",titleFrame,"CENTER",0,1)
-        titletext:SetText( string.format("EPGPLootMaster %s by Bushmaster <Steel Alliance> - Twisting Nether EU", LootMaster:GetVersionString() ) )
+        titletext:SetText( string.format("EPGPLootMaster %s by Bushmaster (Modified by Verlange - Icecrown Warmane)", LootMaster:GetVersionString() ) )
         frame.titleFrame = titleFrame
         --#endregion
 

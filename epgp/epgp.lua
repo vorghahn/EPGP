@@ -181,25 +181,89 @@ local ignored = {}
 local db
 local standings = {}
 local selected = {}
+local oog_alts = {}
+local oog_main_alt_list = {}
 selected._count = 0  -- This is safe since _ is not allowed in names
+
+local decode_class = {
+["dk"]="DEATHKNIGHT",
+["de"]="DEATHKNIGHT",
+["DEATHKNIGHT"]="DEATHKNIGHT",
+["dr"]="DRUID",
+["du"]="DRUID",
+["DRUID"]="DRUID",
+["h"]="HUNTER",
+["hu"]="HUNTER",
+["HUNTER"]="HUNTER",
+["m"]="MAGE",
+["ma"]="MAGE",
+["MAGE"]="MAGE",
+["pa"]="PALADIN",
+["PALADIN"]="PALADIN",
+["pr"]="PRIEST",
+["PRIEST"]="PRIEST",
+["r"]="ROGUE",
+["ROGUE"]="ROGUE",
+["ro"]="ROGUE",
+["s"]="SHAMAN",
+["sh"]="SHAMAN",
+["SHAMAN"]="SHAMAN",
+["lo"]="WARLOCK",
+["WARLOCK"]="WARLOCK",
+["wa"]="WARRIOR",
+["wa"]="WARRIOR",
+["WARRIOR"]="WARRIOR"
+}
 
 local function DecodeNote(note)
   if note then
     if note == "" then
-      return 0, 0
+      return 0, 0, 0
     else
-      local ep, gp = string.match(note, "^(%d+),(%d+)$")
-      if ep then
-        return tonumber(ep), tonumber(gp)
-      end
+	  if string.find(note, ";") then
+	    local alt = string.match(note, ";(%w+)/")
+		local ep, gp = string.match(note, "^(%d+),(%d+);")
+		if ep then 
+		  return tonumber(ep), tonumber(gp), alt
+		end
+	  else
+	    local ep, gp = string.match(note, "^(%d+),(%d+)$")
+		return tonumber(ep), tonumber(gp), 0
+	  end
     end
   end
 end
 
-local function EncodeNote(ep, gp)
-  return string.format("%d,%d",
-                       math.max(ep, 0),
-                       math.max(gp - global_config.base_gp, 0))
+local function ScrapeClass(note)
+  if note then
+    if note == "" then
+      return "DEATHKNIGHT"
+    else
+	  if string.find(note, "/") then
+	    local class = string.lower(string.match(note, "/(%w+)"))
+		local class_decoded = decode_class[class]
+		if class_decoded then 
+		  return class_decoded
+		end
+	  else
+	    return "DEATHKNIGHT"
+	  end
+    end
+  end
+end
+
+local function EncodeNote(ep, gp, alt)
+  if alt == 0 then
+    return string.format("%d,%d",
+						   math.max(ep, 0),
+						   math.max(gp - global_config.base_gp, 0))
+  else
+    return string.format("%d,%d;%s/%s",
+						   math.max(ep, 0),
+						   math.max(gp - global_config.base_gp, 0),
+						   alt,
+						   oog_alts[alt]["class"])
+  end
 end
 
 local function AddEPGP(name, ep, gp)
@@ -215,9 +279,13 @@ local function AddEPGP(name, ep, gp)
   if (total_gp + gp) < 0 then
     gp = -total_gp
   end
-
-  GS:SetNote(name, EncodeNote(total_ep + ep,
-                              total_gp + gp + global_config.base_gp))
+  if oog_main_alt_list[name] then
+    GS:SetNote(name, EncodeNote(total_ep + ep,
+                              total_gp + gp + global_config.base_gp, oog_main_alt_list[name]))
+  else
+    GS:SetNote(name, EncodeNote(total_ep + ep,
+                              total_gp + gp + global_config.base_gp, 0))
+  end
   return ep, gp
 end
 
@@ -424,24 +492,45 @@ local function ParseGuildNote(callback, name, note)
   -- Delete current state about this toon.
   DeleteState(name)
 
-  local ep, gp = DecodeNote(note)
-  if ep then
-    ep_data[name] = ep
+  local ep, gp, alt = DecodeNote(note)
+  if alt ~= 0 then
+    Debug("Alt detected %s", alt)
+    -- used for out of guild alts, means a name of a alt has been returned
+	main_data[alt] = name
+	-- todo bug here
+    if not alt_data[name] then
+      alt_data[name] = {}
+    end
+    table.insert(alt_data[name], alt)
+	oog_main_alt_list[name] = alt
+	oog_alts[alt] = {}
+	oog_alts[alt]["class"] = ScrapeClass(note)
+	oog_alts[alt]["rank"] = GS:GetRank(name)
+	oog_alts[alt]["main"] = name
+	-- todo table.insert(oog_main_alt_list[name], alt)
+    ep_data[alt] = nil
+    gp_data[alt] = nil
+	ep_data[name] = ep
     gp_data[name] = gp
   else
-    local main_ep = DecodeNote(GS:GetNote(note))
-    if not main_ep then
-      -- This member does not point to a valid main, ignore it.
-      ignored[name] = note
+    if ep then
+      ep_data[name] = ep
+      gp_data[name] = gp
     else
-      -- Otherwise setup the alts state
-      main_data[name] = note
-      if not alt_data[note] then
-        alt_data[note] = {}
+      local main_ep = DecodeNote(GS:GetNote(note))
+      if not main_ep then
+        -- This member does not point to a valid main, ignore it.
+        ignored[name] = note
+      else
+        -- Otherwise setup the alts state
+        main_data[name] = note
+        if not alt_data[note] then
+          alt_data[note] = {}
+        end
+        table.insert(alt_data[note], name)
+        ep_data[name] = nil
+        gp_data[name] = nil
       end
-      table.insert(alt_data[note], name)
-      ep_data[name] = nil
-      gp_data[name] = nil
     end
   end
   DestroyStandings()
@@ -460,6 +549,7 @@ function EPGP:ExportRoster()
 end
 
 function EPGP:ImportRoster(t, new_base_gp)
+  --todo modify
   -- This ugly hack is because EncodeNote reads base_gp to encode the
   -- GP properly. So we reset it to what we get passed, and then we
   -- restore it so that the BaseGPChanged event is fired properly when
@@ -470,10 +560,14 @@ function EPGP:ImportRoster(t, new_base_gp)
   local notes = {}
   for _, entry in pairs(t) do
     local name, ep, gp = unpack(entry)
-    notes[name] = EncodeNote(ep, gp)
+	if oog_main_alt_list[name] then
+	  notes[name] = EncodeNote(ep, gp, oog_main_alt_list[name])
+	else
+      notes[name] = EncodeNote(ep, gp, 0)
+	end
   end
 
-  local zero_note = EncodeNote(0, 0)
+  local zero_note = EncodeNote(0, 0, 0)
   for name,_ in pairs(ep_data) do
     local note = notes[name] or zero_note
     GS:SetNote(name, note)
@@ -529,6 +623,22 @@ end
 
 function EPGP:GetAlt(name, i)
   return alt_data[name][i]
+end
+
+function EPGP:GetRank(name)
+  if oog_alts[name] ~= nil then
+    return oog_alts[name]["rank"]
+  else
+    return GS.GetRank(name)
+  end
+end
+
+function EPGP:GetMain(name)
+  if oog_alts[name] ~= nil then
+    return oog_alts[name]["main"]
+  else
+    return 'Is Main'
+  end
 end
 
 function EPGP:SelectMember(name)
@@ -601,9 +711,12 @@ end
 
 function EPGP:ResetEPGP()
   assert(EPGP:CanResetEPGP())
-
-  local zero_note = EncodeNote(0, 0)
+  --todo retain alts after reset
   for name,_ in pairs(ep_data) do
+    local zero_note = EncodeNote(0, 0, 0)
+    if oog_main_alt_list[name] ~= nil then
+	  zero_note = EncodeNote(0, 0, oog_main_alt_list[name])
+	end
     GS:SetNote(name, zero_note)
     local ep, gp, main = self:GetEPGP(name)
     assert(main == nil, "Corrupt alt data!")
@@ -656,6 +769,9 @@ function EPGP:GetEPGP(name)
 end
 
 function EPGP:GetClass(name)
+  if oog_alts[name] ~= nil then
+    return oog_alts[name]["class"]
+  end
   return GS:GetClass(name)
 end
 

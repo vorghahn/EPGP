@@ -1290,7 +1290,7 @@ local function CreateEPGPFrameStandings()
       "OnEnter",
       function(self)
         GameTooltip_SetDefaultAnchor(GameTooltip, self)
-        GameTooltip:AddLine(GS:GetRank(self.name))
+        GameTooltip:AddLine(EPGP:GetRank(self.name))
         if EPGP:GetNumAlts(self.name) > 0 then
           GameTooltip:AddLine("\n"..L["Alts"])
           for i=1,EPGP:GetNumAlts(self.name) do
@@ -1329,6 +1329,9 @@ local function CreateEPGPFrameStandings()
         row.name = EPGP:GetMember(j)
         row.cells[1]:SetText(row.name)
         local c = RAID_CLASS_COLORS[EPGP:GetClass(row.name)]
+		if c == nil then
+		  c = RAID_CLASS_COLORS["PALADIN"]
+		end
         row.cells[1]:SetTextColor(c.r, c.g, c.b)
         local ep, gp = EPGP:GetEPGP(row.name)
         row.cells[2]:SetText(ep)

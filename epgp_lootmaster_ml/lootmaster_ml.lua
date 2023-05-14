@@ -315,6 +315,7 @@ function LootMasterML:MonitorMessageRequired( loot )
     loot = self:GetLoot( loot );
     if not loot then return false end;
     if not loot.mayDistribute then return false end;
+	if loot.autoShardLootable then return false end;
     if loot.autoLootable then return false end;
     if loot.binding == 'pickup' then return true end;
     if loot.quality>=LootMaster.db.profile.monitorThreshold then return true end;
@@ -919,6 +920,11 @@ function LootMasterML:AddLoot( link, mayDistribute, quantity )
   loot.buttonString = buttonString
 
   -- See if this item should be autolooted
+  if itemRarity==5 and db.AutoShardLooter~='' then
+      loot.autoShardLootable = true
+  end
+  
+  -- See if this item should be autolooted
   if db.AutoLootThreshold~=0 and db.AutoLooter~='' then
       if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity<=db.AutoLootThreshold then
           loot.autoLootable = true
@@ -1051,6 +1057,20 @@ function LootMasterML:GetEPGP( player )
     return ep, gp, alt, minEP;
 end
 
+
+function LootMasterML:GetOOGRank( player )
+  --self:Debug('player: ' .. tostring(player))
+  --self:Debug("player = %s ", player);
+  if not EPGP or not EPGP.GetRank then
+    return 'Fail1'
+  end
+  local rank = pcall(EPGP.GetRank, EPGP, player)
+  if not rank then
+    return 'Fail2'
+  end
+  return rank
+end
+
 function LootMasterML:GetEP( player )
     local ep, gp = self:GetEPGP( player );
     if not ep then return -1 end;
@@ -1134,10 +1154,17 @@ function LootMasterML:AddCandidate( loot, candidate )
     local guildRankName = '';
     local candidateClass = nil;
     local candidateClassLocalized = nil;
+	if candidate == nil then
+	  self:Debug('candidate is nil')
+	else
+      self:Debug('player: ' .. tostring(candidate))
+	end
     if self.guildInfo and self.guildInfo[candidate] then
         guildRankName = self.guildInfo[candidate].rank or '';
         candidateClass = self.guildInfo[candidate].class;
         candidateClassLocalized = self.guildInfo[candidate].classLocalized;
+	else
+	  guildRankName = EPGP:GetRank(candidate) or ''
     end
 
     -- No class found, try looking it up another way.
@@ -1148,7 +1175,7 @@ function LootMasterML:AddCandidate( loot, candidate )
             LootMaster:UpdateClassLocalizer(candidateClassLocalized, candidateClass)
         end
     end
-
+    self:Debug('class: ' .. tostring(candidateClass))
     local classes = self.lootTable[itemID].classes
     local initResponse = LootMaster.RESPONSE.NOTANNOUNCED;
     -- Autopass BoP items that cannot be used by this class
@@ -1161,7 +1188,9 @@ function LootMasterML:AddCandidate( loot, candidate )
         end
     end
     local initResponseSort = LootMaster.RESPONSE[initResponse].SORT
-
+    
+	local candidateMain = EPGP:GetMain(candidate) or ''
+	
     tinsert( self.lootTable[itemID]['rowdata'],
     {   ["unitclass"]       = candidateClass,
         ["response"]        = initResponse,
@@ -1191,7 +1220,11 @@ function LootMasterML:AddCandidate( loot, candidate )
           ["value"]      = guildRankName,
           ["color"]      = self.GetCandidateCellColor,
           ["colorargs"]  = {self, candidate, itemID}},
-
+		  
+          {["name"]       = 'main',
+          ["value"]      = candidateMain,
+		  },
+		  
           {["name"]       = 'responsesortFunc',
           ["value"]      = self.ResponseSortValue,
           ["args"]       = {self, candidate, itemID},
@@ -1893,7 +1926,27 @@ function LootMasterML:OPEN_MASTER_LOOT_LIST()
                 self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoLooter or 'nil'))
             end
         end
-    end
+    elseif LootMaster.db.profile.AutoLootThreshold==5 and LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
+	    -- loot is below or equal to AutoLootThreshold and matches the autoLooter requirements
+        -- try to give the loot.
+
+        autoAnnounce = false
+
+        if IsAltKeyDown() then
+            self:Print('Not auto looting (alt+click detected)')
+        else
+            isAutoLooted = true
+            if self:IsCandidate( lootID, LootMaster.db.profile.AutoShardLooter or '' ) then
+                self:Print(format('Auto looting %s to %s', link or 'nil', LootMaster.db.profile.AutoShardLooter or 'nil'))
+                -- dont know if it will ever happen, but send all matching items to the autolooter
+                for i=1, totalQuantity do
+                    self:GiveLootToCandidate( lootID, LootMaster.db.profile.AutoShardLooter or '', LootMaster.LOOTTYPE.BANK )
+                end
+            else
+                self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoShardLooter or 'nil'))
+            end
+        end
+	end
 
     -- See if we have to auto announce
     if autoAnnounce then

@@ -426,7 +426,66 @@ function mod:OnEnable()
                     },
                 },
                 
-                
+                 AutoShardGroup = {
+            
+                            type = "group",
+                            order = 15,
+                            guiInline = true,
+                            name = "Auto Legendary looting",
+                            desc = "Auto looting of Legendary items, intended for shard looting.",
+                            hidden = function(info) return not LootMasterML end,
+                            args = {
+                                
+                                help = {
+                                    order = 0,
+                                    type = "description",
+                                    name = "The EPGP Lootmaster auto looter allows you to send Legendaries to a predefined candidate without asking questions.",
+                                },
+                                
+                                
+                                AutoShardLooter = {
+                                    type = "select",
+                                    style = 'dropdown',
+                                    order = 2,
+                                    width = 'full',
+                                    name = "Name of the default candidate (case sensitive):",
+                                    desc = "Please enter the name of the default candidate to receive the items here.",
+                                    disabled = function(info) return (LootMaster.db.profile.AutoLootThreshold or 0)==0 end,
+                                    values = function()
+                                        local names = {}
+                                        local name;
+                                        local num = GetNumRaidMembers()
+                                        if num>0 then
+                                            -- we're in raid
+                                            for i=1, num do 
+                                                name = GetRaidRosterInfo(i)
+                                                names[name] = name
+                                            end
+                                        else
+                                            num = GetNumPartyMembers()
+                                            if num>0 then
+                                                -- we're in party
+                                                for i=1, num do 
+                                                    names[UnitName('party'..i)] = UnitName('party'..i)
+                                                end
+                                                names[UnitName('player')] = UnitName('player')
+                                            else
+                                                -- Just show everyone in guild.
+                                                local num = GetNumGuildMembers(true);
+                                                for i=1, num do repeat
+                                                    name = GetGuildRosterInfo(i)
+                                                    names[name] = name
+                                                until true end     
+                                            end                                   
+                                        end
+                                        sort(names)
+                                        return names;
+                                    end
+                                },
+                            }
+                },
+            
+               
                 AutoLootGroup = {
             
                             type = "group",
