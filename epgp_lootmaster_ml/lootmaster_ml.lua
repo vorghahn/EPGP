@@ -1640,6 +1640,35 @@ function LootMasterML:GiveLootToCandidate( link, candidate, lootType, gp )
 
 end
 
+function LootMasterML:GiveManualLootToCandidate( link, candidate, lootType, gp )
+	local candidateID = nil;
+	local slotID = nil;
+	local loot = self:GetLoot(link)
+
+    if not loot or not loot.id then
+        return self:Print( format("Could not send %s to %s, loot not found in cache", tostring(link), tostring(candidate) ) )
+    end
+
+    if lootType ~= LootMaster.LOOTTYPE.GP then
+        gp = 0;
+    end
+    self:SetCandidateData( loot.id, candidate, 'lootType', lootType or 0 );
+    self:SetCandidateData( loot.id, candidate, 'lootGP', tonumber(gp) or 0 );
+	local itemName, itemLink, _, _, itemMinLevel, itemType, itemSubType, itemStackCount, _, itemTexture = GetItemInfo(link)
+	if candidate and link then
+		EmulateEvent('CHAT_MSG_LOOT', LOOT_ITEM:format(candidate, itemLink), '', '', '', '')
+	end
+	--GiveMasterLoot( slotID, candidateID )
+
+end
+
+function EmulateEvent(event, ...)
+  for _, frame in pairs({GetFramesRegisteredForEvent(event)}) do
+    local func = frame:GetScript('OnEvent')
+    pcall(func, frame, event, ...)
+  end
+end
+
 function LootMasterML:OnMasterLooterChange(masterlooter)
     -- if master looter is nil, return
     if not masterlooter then return end;
@@ -2008,7 +2037,7 @@ function LootMasterML:EPGP_DFB_slasher()
 end
 
 function LootMasterML:EPGP_DFB_init()
-	_G["EPGP_DFB_frame_text"]:SetText("Shift-Drag an item in inventory to start loot distribution process.")
+	_G["EPGP_DFB_frame_text"]:SetText("Drag an item in inventory to start loot distribution process.")
 		EPGP_DFB_frame:SetScript("OnHide", function()
 			EPGP_DFB_LastTime = 0
 			EPGP_DFB_LastLink = nil

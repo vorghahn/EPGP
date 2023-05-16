@@ -9,7 +9,7 @@
 
 LootMaster          = LibStub("AceAddon-3.0"):NewAddon("EPGPLootMaster", "AceConsole-3.0", "AceComm-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceHook-3.0")
 
-local version 	    = "0.4.9.335.4"
+local version 	    = "0.4.9.335.5"
 local dVersion 	    = "2023-05-19T05:41:40Z"
 local iVersion	    = 3
 local iVersionML	  = 11
@@ -236,6 +236,7 @@ function LootMaster:BagHandler( lootLink )
             local lootID = ml.AddLoot(ml, lootLink, true);
             loot = ml.GetLoot(ml, lootID);
             loot.announced = false;
+			-- label as from bags
             loot.manual = true;
             added = true;
         end

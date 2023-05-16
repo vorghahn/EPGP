@@ -813,13 +813,80 @@ function LootMasterML:CandidateDropDownInitialize( frame, level, menuList )
                 UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
 
             else
+			
                 info.isTitle = false;
+                info.disabled = not CanEditOfficerNote();
+                info.text = format( 'Give loot and award %s GP', loot.gpvalue_manual or 0 );
+                info.tooltipTitle = info.text;
+                info.tooltipText = format('Attempts to send the loot to the candidate and awards %s GP to the candidate', loot.gpvalue_manual or 0);
+                info.func = function() LootMasterML.GiveManualLootToCandidate(LootMasterML, LootMasterML.CandidateDropDown.selectedLink, LootMasterML.CandidateDropDown.selectedCandidate, LootMaster.LOOTTYPE.GP, loot.gpvalue_manual or 0) end;
+                UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+
+                if loot.gpvalue2 and loot.gpvalue2~=0 then
+                    info.isTitle = false;
+                    info.disabled = not CanEditOfficerNote();
+                    info.text = format( 'Give loot and award %s GP (100%%)', loot.gpvalue2 or 0 );
+                    info.tooltipTitle = info.text;
+                    info.tooltipText = format('Attempts to send the loot to the candidate and awards %s GP to the candidate', loot.gpvalue2 or 0);
+                    info.func = function() LootMasterML.GiveManualLootToCandidate(LootMasterML, LootMasterML.CandidateDropDown.selectedLink, LootMasterML.CandidateDropDown.selectedCandidate, LootMaster.LOOTTYPE.GP, loot.gpvalue2 or 0) end;
+                    UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+                end
+
+                for i=1, loot.numButtons do
+                    local btn = loot.buttons[i]
+                    if btn.gpValue then
+                      local v = btn.gpValue
+                      local p = btn.gpValueIsPercentage
+                      local vs = v
+                      local gp = tonumber(loot.gpvalue) or 0
+                      if p then
+                          gp = ceil(gp /100 * v)
+                          vs = v .. '% of ' .. (tonumber(loot.gpvalue) or 0)
+                      else
+                          gp = ceil(v)
+                      end
+
+                      info.isTitle = false;
+                      info.disabled = not CanEditOfficerNote();
+                      info.text = format( 'Give loot and award %s GP for %s (%s)', gp, btn.text, vs );
+                      info.tooltipTitle = info.text;
+                      info.tooltipText = format('Attempts to send the loot to the candidate and awards %s GP to the candidate for %s', gp, btn.text);
+                      info.func = function() LootMasterML.GiveManualLootToCandidate(LootMasterML, LootMasterML.CandidateDropDown.selectedLink, LootMasterML.CandidateDropDown.selectedCandidate, LootMaster.LOOTTYPE.GP, gp) end;
+                      UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+                    end
+                end
+
+                info.isTitle = false;
+                info.disabled = false;
+                info.text = 'Give loot for free';
+                info.tooltipTitle = 'Give loot for free';
+                info.tooltipText = "Attempts to send the loot to the candidate and doesn't award GP to the candidate, thus giving it for free.";
+                info.func = function() LootMasterML.GiveManualLootToCandidate(LootMasterML, LootMasterML.CandidateDropDown.selectedLink, LootMasterML.CandidateDropDown.selectedCandidate, LootMaster.LOOTTYPE.GP, 0 ) end;
+                UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+
+                info.isTitle = false;
+                info.disabled = false;
+                info.text = 'Give loot for disenchantment';
+                info.tooltipTitle = 'Give loot for disenchantment';
+                info.tooltipText = 'Attempts to send the loot to the candidate for disenchantment.';
+                info.func = function() LootMasterML.GiveManualLootToCandidate(LootMasterML, LootMasterML.CandidateDropDown.selectedLink, LootMasterML.CandidateDropDown.selectedCandidate, LootMaster.LOOTTYPE.DISENCHANT ) end;
+                UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+
+                info.isTitle = false;
+                info.disabled = false;
+                info.text = 'Give loot for bank';
+                info.tooltipTitle = 'Give loot for bank';
+                info.tooltipText = 'Attempts to send the loot to the candidate for storage in bank.';
+                info.func = function() LootMasterML.GiveManualLootToCandidate(LootMasterML, LootMasterML.CandidateDropDown.selectedLink, LootMasterML.CandidateDropDown.selectedCandidate, LootMaster.LOOTTYPE.BANK ) end;
+                UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+
+                --[[info.isTitle = false;
                 info.disabled = false;
                 info.text = '- Cannot distribute loot -';
                 info.tooltipTitle = info.text;
                 info.tooltipText = "You have added this loot manually to the list, you will need to handle the loot manually and discard the loot from the list when you're done distributing it."
                 info.func = function() end;
-                UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);
+                UIDropDownMenu_AddButton(info,UIDROPDOWNMENU_MENU_LEVEL);--]]
             end
 
             info.isTitle = true;
