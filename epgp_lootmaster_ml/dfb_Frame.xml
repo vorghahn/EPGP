@@ -13,32 +13,38 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
+		<!--<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Gold-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">-->
 		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
 			<Color r="0" g="0" b="0" />
 			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11" />
+			    <!--<AbsInset left="11" right="12" top="12" bottom="11" />-->
+				<AbsInset left="4" right="4" top="4" bottom="4" />
 			</BackgroundInsets>
 			<TileSize>
 				<AbsValue val="35" />
 			</TileSize>
 			<EdgeSize>
-				<AbsValue val="35" />
+				<!--<AbsValue val="35" />-->
+				<AbsValue val="16" />
 			</EdgeSize>
 		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
-				<Texture file="Interface\DialogFrame\UI-DialogBox-Header">
+			    <!--<Texture file="Interface\DialogFrame\UI-DialogBox-Header">-->
+				<Backdrop bgFile="Interface\ChatFrame\ChatFrameBackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<Size>
 						<AbsDimension x="400" y="70"/>
 					</Size>
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
-								<AbsDimension x="0" y="12"/>
+								<!--<AbsDimension x="0" y="24"/>-->
+								<AbsDimension x="0" y="24"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
-				</Texture>
+				</Backdrop>
+				<!--</Texture>-->
 			</Layer>
 			<Layer level="OVERLAY">
 				<FontString name="$parent_title" inherits="GameFontNormal" text="Distribution From Bags">
