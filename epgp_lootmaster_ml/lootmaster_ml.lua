@@ -31,6 +31,24 @@ EPGP_DFB_BagId = 0
 EPGP_DFB_SlotId = 0
 EPGP_DFB_Enabled = true
 
+StaticPopupDialogs["TRADE_SUCCESS"] = {
+	text = "Click YES to confirm item has been traded so that GP can be adjusted.",
+	--text = "%s",
+	--textarg1,textarg2="%s","s",
+	button1 = YES,
+	button2 = NO,
+	data={},
+	--text =  data.char,
+	hideOnEscape = 1,
+	timeout = 0,
+	whileDead = 1,
+  	OnAccept = function(self, data)
+		chatMsgLoot(data.char, data.item)
+	end,
+	OnCancel = function()
+	end
+}
+
 StaticPopupDialogs["EPGPLOOTMASTER_ASK_TRACKING"] = {
 	text = '- - - - EPGPLootmaster - - - -\r\n\r\nYou are the loot master, would you like to use EPGPLootmaster to distribute loot?\r\n\r\n(You will be asked again next time. Use /lm config to change this behaviour)',
 	button1 = YES,
@@ -1655,11 +1673,49 @@ function LootMasterML:GiveManualLootToCandidate( link, candidate, lootType, gp )
     self:SetCandidateData( loot.id, candidate, 'lootType', lootType or 0 );
     self:SetCandidateData( loot.id, candidate, 'lootGP', tonumber(gp) or 0 );
 	local itemName, itemLink, _, _, itemMinLevel, itemType, itemSubType, itemStackCount, _, itemTexture = GetItemInfo(link)
-	if candidate and link then
+	-- Can trade the player?
+	if candidate and itemLink then
+		if CheckInteractDistance(candidate, 2) == 1 then
+			--[[if itemInfo.isStack and addon.options.ignoreStacks == false then
+				self:Print( format(L.ErrItemStack:format(itemLink)))
+				return false
+			end--]]
+			ClearCursor()
+			PickupContainerItem(EPGP_DFB_BagId, EPGP_DFB_SlotId)
+			if CursorHasItem() then
+				InitiateTrade(candidate)
+				--[[if addon.options.screenReminder and screenshotWarn == false then
+					self:Print( format(L.ErrScreenReminder))
+					screenshotWarn = true--]]
+			end
+
+		-- Cannot trade the player?
+		elseif GetUnitID(candidate) ~= "none" then
+			ClearRaidIcons()
+			SetRaidTarget(UnitName("player"), 1)
+			SetRaidTarget(candidate, 4)
+			SendChatMessage("Triangle, come trade Star", "RAID_WARNING")
+			SendChatMessage("Come trade Star.", "WHISPER", nil, candidate)
+		end
+		loot_data = {}
+		loot_data['char'] = candidate
+		loot_data['item'] = itemLink
+		loot_data['gp'] = candidate
+		--StaticPopupDialogs("TRADE_SUCCESS").textarg1 = candidate
+		--StaticPopupDialogs("TRADE_SUCCESS").textarg2 = itemLink
+		local dialog = StaticPopup_Show("TRADE_SUCCESS", candidate, itemLink)
+		if (dialog) then
+		dialog.data = loot_data
+		end
+	end
+end
+
+function chatMsgLoot(candidate, itemLink)
+	--StaticPopup_Show("EPGPLOOTMASTER_ASK_TRACKING")
+	--Print(candidate, itemLink)
+	if candidate and itemLink then
 		EmulateEvent('CHAT_MSG_LOOT', LOOT_ITEM:format(candidate, itemLink), '', '', '', '')
 	end
-	--GiveMasterLoot( slotID, candidateID )
-
 end
 
 function EmulateEvent(event, ...)
@@ -2109,5 +2165,35 @@ function EPGP_DFB_print(str, err)
 		LootMaster:Print(tostring(str))
 	else
 		LootMaster:Print("|c00FF0000Error|r|c00FFF569 - " .. tostring(str));
+	end
+end
+
+function ClearRaidIcons()
+	local num = GetNumRaidMembers()
+    if num>0 then
+        -- we're in raid
+        for raidIndex=1, MAX_RAID_MEMBERS do
+            local rName, rRank, _, _, _, _, _, rOnline, _, _, rIsML = GetRaidRosterInfo(raidIndex)
+            if (rName and rOnline) and rName~=UnitName('player') then
+              -- Player is online and not self
+				SetRaidTarget("raid"..tostring(i), 0)
+
+            end
+        end
+	end
+end
+
+function GetUnitID(candidate)
+	local num = GetNumRaidMembers()
+    if num>0 then
+        -- we're in raid
+        for raidIndex=1, MAX_RAID_MEMBERS do
+            local rName, rRank, _, _, _, _, _, rOnline, _, _, rIsML = GetRaidRosterInfo(raidIndex)
+            if rName == candidate then
+              -- Player is online and not self
+				return raidIndex
+
+            end
+        end
 	end
 end
