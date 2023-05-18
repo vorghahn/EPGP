@@ -1119,8 +1119,17 @@ end
 function LootMasterML:GetMinEPMatch( player )
     local ep, gp, alt, minEP = self:GetEPGP( player );
     if not ep or not minEP then return 'n' end;
-
+	if ep==0 then return 'n' end
     if ep>=minEP then return 'y' end
+    return 'n';
+end
+
+function LootMasterML:GetBaseGPMatch( player )
+    local ep, gp, alt, minEP = self:GetEPGP( player );
+	local baseGP = EPGP:GetBaseGP();
+    if not gp or not baseGP then return 'n' end;
+
+    if gp>baseGP then return 'y' end
     return 'n';
 end
 
@@ -1281,11 +1290,15 @@ function LootMasterML:AddCandidate( loot, candidate )
           {["name"]       = 'GP',
           ["value"]      = self.GetGP,
           ["userDraw"]   = addon.SetCellEPGPNumberFormatted,
+		  ["color"]      = self.GetCandidateGPCellColor,
+		  ["colorargs"]  = {self, candidate, itemID},
           ["args"]       = {self, candidate, self.GetGP}},
 
           {["name"]       = 'PR',
           ["value"]      = self.GetPR,
           ["userDraw"]   = addon.SetCellEPGPNumberFormatted,
+		  ["color"]      = self.GetCandidatePRCellColor,
+		  ["colorargs"]  = {self, candidate, itemID},
           ["args"]       = {self, candidate, self.GetPR}},
 
           {["name"]       = 'roll',
