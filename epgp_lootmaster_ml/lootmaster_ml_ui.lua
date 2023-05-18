@@ -18,15 +18,15 @@ local sstScrollCols = {
        { ["name"] = "Candidate",		  ["width"] = 100, ["align"] = "LEFT" },
        { ["name"] = "Rank",     		  ["width"] = 100, ["align"] = "LEFT" },
 	   { ["name"] = "Main",		  		["width"] = 100, ["align"] = "LEFT" },
-       { ["name"] = "Response",		    ["width"] = 210, ["align"] = "LEFT", 	  ["defaultsort"] = "desc", ["sort"] = "desc", ["color"] = {["r"] = 0.25, ["g"] = 1.00, ["b"] = 0.25, ["a"] = 1.0 }, ["sortnext"]=10 }, --,
+       { ["name"] = "Response",		    ["width"] = 210, ["align"] = "LEFT", ["sortfirst"]=5, ["sortnext"]=11,["defaultsort"] = "desc", ["sort"] = "desc", ["color"] = {["r"] = 0.25, ["g"] = 1.00, ["b"] = 0.25, ["a"] = 1.0 }}, --,
        { ["name"] = "EP",		          ["width"] = 50,  ["align"] = "RIGHT",   ["color"] = epgpColor},
        { ["name"] = "GP",		          ["width"] = 50,  ["align"] = "RIGHT",   ["color"] = epgpColor},
-       { ["name"] = "PR",		          ["width"] = 50,  ["align"] = "RIGHT",   ["defaultsort"] = "asc", ["sort"] = "asc", ["sortfirst"]=10, ["sortnext"]=8, ["ident"]="PR"},
-       { ["name"] = "Roll",		        ["width"] = 35,  ["align"] = "RIGHT",   ["defaultsort"] = "asc", ["sort"] = "asc", ["color"] = epgpColor},
+	   { ["name"] = "PR",		          ["width"] = 50,  ["align"] = "RIGHT",   ["defaultsort"] = "asc", ["sort"] = "asc", ["sortnext"]=9, ["ident"]="PR"},
+       { ["name"] = "Roll",		        ["width"] = 35,  ["align"] = "RIGHT",   ["defaultsort"] = "asc", ["sort"] = "asc", ["color"] = {['r']=1,['g']=1,['b']=0}},
 
        { ["name"] = "Note",		        ["width"] = 30,  ["align"] = "RIGHT"},
 
-       { ["name"] = " ",		          ["width"] = 5,   ["align"] = "LEFT",    ["defaultsort"] = "asc", ["sort"] = "asc", ["sortnext"]=7},   -- Spacer, actually contains a check if someone matches MinEP, used for sorting purposes.
+       { ["name"] = " ",		          ["width"] = 5,   ["align"] = "LEFT",    ["defaultsort"] = "asc", ["sort"] = "asc", ["sortnext"]=8},  -- Spacer, actually contains a check if someone matches MinEP, used for sorting purposes.
 
        { ["name"] = "iLvl",		        ["width"] = 60,  ["align"] = "CENTER",  ["bgcolor"] = gearBgColor },
        { ["name"] = "GP",		          ["width"] = 60,  ["align"] = "CENTER",  ["bgcolor"] = gearBgColor },
