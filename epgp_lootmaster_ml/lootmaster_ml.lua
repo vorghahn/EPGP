@@ -2059,7 +2059,7 @@ function LootMasterML:OPEN_MASTER_LOOT_LIST()
                 self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoLooter or 'nil'))
             end
         end
-    elseif LootMaster.db.profile.AutoLootThreshold==5 and LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
+    elseif LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
 	    -- loot is below or equal to AutoLootThreshold and matches the autoLooter requirements
         -- try to give the loot.
 
