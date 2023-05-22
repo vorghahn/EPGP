@@ -125,10 +125,10 @@ function LootMasterML:OnInitialize()
 
     -- Disable the GP Popup on the new EPGP versions
     if EPGP and EPGP.GetModule then
-      local loot = EPGP:GetModule("loot")
-      if loot and loot.Disable then
-        loot:Disable()
-      end
+		local loot = EPGP:GetModule("loot")
+		if loot then
+			loot:SetEnabled(false)
+		end
     end
 
     -- Warning if we're in a guild and we can edit officer notes but EPGP is not installed.
