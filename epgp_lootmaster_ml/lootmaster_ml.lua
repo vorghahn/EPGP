@@ -201,11 +201,23 @@ function LootMasterML:HandleEPGPCommand(command, message, sender, event)
         return false;
     end
 
-    if command=='PAS' or command=='PASS' or command=='NEED' or command=='GREED' and message~='' then
+    if command=='PAS' or command=='PASS' or command=='NEED' or command=='GREED' or command=='MAJOR' or command=='MINOR' or command=='OS' and message~='' then
         --Someone is trying to need/greed/pass a loot item.
 
         if command=='PAS' then
             command = 'PASS'
+        end
+		
+		if command=='MAJOR' then
+            command = 'NEED'
+        end
+		
+		if command=='MINOR' then
+            command = 'MINORUPGRADE'
+        end
+		
+		if command=='OS' then
+            command = 'OFFSPEC'
         end
 
         local itemID = self:GetLootID( message )
@@ -231,7 +243,7 @@ function LootMasterML:HandleEPGPCommand(command, message, sender, event)
 
         return true;
     else
-        self:SendWhisperResponse( format('"%s" not understood. usage: /w %s !epgp need/greed/pass [itemlink]', command, UnitName('player')), sender );
+        self:SendWhisperResponse( format('"%s" not understood. usage: /w %s !epgp major/minor/os/pass [itemlink]', command, UnitName('player')), sender );
         self:Print( format('%s sent "%s %s"; not understood, returned usage list.', sender or '', command or '', message or ''));
         return true;
     end
@@ -778,7 +790,7 @@ function LootMasterML:AskCandidateIfNeeded( link, candidate )
 
 	if candidate == 'RAID' or candidate == 'PARTY' then
 
-        SendChatMessage( format('%splease whisper me !epgp need/greed/pass %s  (or use the popup if you have EPGPLootmaster installed)', MsgPrefix or '', loot.link or ''), candidate );
+        SendChatMessage( format('%splease whisper me !epgp major/minor/os/pass %s  (or use the popup if you have EPGPLootmaster installed)', MsgPrefix or '', loot.link or ''), candidate );
 
         -- Sending to raid channel? Update all candidate statuses.
         for c, index in pairs(loot.candidates) do
@@ -789,7 +801,7 @@ function LootMasterML:AskCandidateIfNeeded( link, candidate )
 
     elseif candidate ~= UnitName('player') then
 
-        SendChatMessage( format('%splease whisper me !epgp need/greed/pass %s  (or use the popup if you have EPGPLootmaster installed)', MsgPrefix or '', loot.link or ''), 'WHISPER', nil, candidate );
+        SendChatMessage( format('%splease whisper me !epgp major/minor/os/pass %s  (or use the popup if you have EPGPLootmaster installed)', MsgPrefix or '', loot.link or ''), 'WHISPER', nil, candidate );
         self:SetCandidateResponse( loot.id, candidate, LootMaster.RESPONSE.INIT );
 
     end

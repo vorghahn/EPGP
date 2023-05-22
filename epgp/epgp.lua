@@ -435,10 +435,24 @@ local global_config_defs = {
 for var, def in pairs(global_config_defs) do
   global_config[var] = def.default
 end
+
+function mysplit (inputstr, sep)
+        if sep == nil then
+                sep = "%s"
+        end
+        local t={}
+        for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+                table.insert(t, str)
+        end
+        return t
+end
+
+
 local function ParseGuildInfo(callback, info)
   Debug("Parsing GuildInfo")
   local lines = {string.split("\n", info)}
   local in_block = false
+  local in_alt = false
 
   local new_config = {}
 
@@ -458,6 +472,49 @@ local function ParseGuildInfo(callback, info)
           end
         end
       end
+    end
+  end
+  
+   for _,line in pairs(lines) do
+    if line == "-EPGP_ALTS-" then
+      in_alt = not in_alt
+    elseif in_alt then
+        local v = mysplit(line, ";")
+		Debug("guild info line %s", line)
+        if v then
+			local main_char = table.remove(v,1)
+			for key,value in pairs(v) do
+				local alt_char = mysplit(value,"/")[1]
+				local alt_class = decode_class[mysplit(value,"/")[2]]
+				Debug("main_char [%s]", (main_char))
+				if ep_data[main_char] then
+					Debug("Main char exist")
+				end
+				Debug("alt_char [%s]", (alt_char))
+				Debug("alt_class [%s]", (alt_class))
+				main_data[alt_char] = main_char
+				if not alt_data[main_char] then
+				  alt_data[main_char] = {}
+				end
+				table.insert(alt_data[main_char], alt_char)
+				ep_data[alt_char] = nil
+				gp_data[alt_char] = nil
+				oog_alts[alt_char] = {}
+				oog_alts[alt_char]["class"] = alt_class
+				oog_alts[alt_char]["rank"] = GS:GetRank(main_char)
+				oog_alts[alt_char]["main"] = main_char
+			--[[
+			Debug("Matched [%s]", line)
+			v = def.parser(v)
+			--todo have it check the main exists
+			if v == nil or not def.validator(v) then
+			EPGP:Print(def.error)
+			else
+			new_config[var] = v
+			end--]]
+			end
+        end
+	  
     end
   end
 
