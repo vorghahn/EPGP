@@ -1330,7 +1330,11 @@ local function CreateEPGPFrameStandings()
         row.cells[1]:SetText(row.name)
         local c = RAID_CLASS_COLORS[EPGP:GetClass(row.name)]
 		if c == nil then
-		  c = RAID_CLASS_COLORS["PALADIN"]
+			c = {}
+			c.r=0.64
+			c.g=0.19
+			c.b=0.79
+			c.a=1.0
 		end
         row.cells[1]:SetTextColor(c.r, c.g, c.b)
         local ep, gp = EPGP:GetEPGP(row.name)

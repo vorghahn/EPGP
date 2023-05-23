@@ -1226,7 +1226,9 @@ function LootMasterML:SetCandidateRollCellUserDraw( cell, self, candidate, item 
 end
 
 function LootMasterML:GetCandidateEPCellColor(candidate, item, dataName, defaultColor)
-	if self:GetMinEPMatch(candidate)~='y' then
+	if self:GetMinEPMatch(candidate)=='m' then
+		return {["r"] = 0.64, ["g"] = 0.19, ["b"] = 0.79, ["a"] = 1.0} 
+	elseif self:GetMinEPMatch(candidate)~='y' then
 		return {["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1.0}
 	else
 		return epgpColor
@@ -1235,7 +1237,7 @@ end
 
 function LootMasterML:GetCandidateGPCellColor(candidate, item, dataName, defaultColor)
 	if self:GetBaseGPMatch(candidate)~='y' then
-		return {["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1.0}
+		return {["r"] = 0.64, ["g"] = 0.19, ["b"] = 0.79, ["a"] = 1.0}
 	else
 		return epgpColor
 	end
@@ -1243,7 +1245,7 @@ end
 
 function LootMasterML:GetCandidatePRCellColor(candidate, item, dataName, defaultColor)
 	if self:GetMinEPMatch(candidate)~='y' and self:GetBaseGPMatch(candidate)~='y' then
-		return {["r"] = 1, ["g"] = 0, ["b"] = 0, ["a"] = 1.0}
+		return {["r"] = 0.64, ["g"] = 0.19, ["b"] = 0.79, ["a"] = 1.0}
 	else
 		return {["r"] = 1, ["g"] = 1, ["b"] = 1, ["a"] = 1.0}
 	end

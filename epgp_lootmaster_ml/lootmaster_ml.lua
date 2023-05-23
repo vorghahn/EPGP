@@ -1130,8 +1130,8 @@ end
 
 function LootMasterML:GetMinEPMatch( player )
     local ep, gp, alt, minEP = self:GetEPGP( player );
-    if not ep or not minEP then return 'n' end;
-	if ep==0 then return 'n' end
+    if not ep or not minEP then return 'm' end;
+	if ep==0 then return 'm' end
     if ep>=minEP then return 'y' end
     return 'n';
 end

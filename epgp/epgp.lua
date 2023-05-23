@@ -186,6 +186,7 @@ local oog_main_alt_list = {}
 selected._count = 0  -- This is safe since _ is not allowed in names
 
 local decode_class = {
+["dh"]="DEMONHUNTER",
 ["dk"]="DEATHKNIGHT",
 ["de"]="DEATHKNIGHT",
 ["DEATHKNIGHT"]="DEATHKNIGHT",
@@ -216,6 +217,7 @@ local decode_class = {
 }
 
 local encode_class = {
+["DEMONHUNTER"]="dh",
 ["DEATHKNIGHT"]="de",
 ["DRUID"]="dr",
 ["HUNTER"]="h",
@@ -275,7 +277,7 @@ local function EncodeNote(ep, gp, alt)
 						   math.max(ep, 0),
 						   math.max(gp - global_config.base_gp, 0),
 						   alt,
-						   encode_class[oog_alts[alt]["class"]])
+						   encode_class[oog_alts[alt]["class"]] or "dh")
   end
 end
 
