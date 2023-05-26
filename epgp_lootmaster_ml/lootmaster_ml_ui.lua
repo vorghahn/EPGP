@@ -319,7 +319,40 @@ function LootMasterML:GetFrame()
 	btnDiscard:SetText("Discard loot")
     frame.btnDiscard = btnDiscard;
 
-
+    local btnGuild = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	btnGuild:SetScript("OnClick", function()
+			local msg = "OS Roll for: "..frame.currentLoot.link
+            SendChatMessage(msg, "RAID_WARNING")
+    end)
+    btnGuild:SetScript("OnEnter", function() self:ShowInfoPopup( "OS Roll") end)
+    btnGuild:SetScript("OnLeave", self.HideInfoPopup)
+	btnGuild:SetPoint("TOP",btnAnnounce,"TOP",0,0)
+    btnGuild:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-160,0)
+	btnGuild:SetHeight(25)
+	btnGuild:SetWidth(120)
+	btnGuild:SetText("OS Roll loot")
+    frame.btnGuild = btnGuild;
+	
+	--[[if KRT then
+		SendChatMessage("KRT Found!", "RAID_WARNING")
+	else
+		SendChatMessage("KRT not found!", "RAID_WARNING")
+	end--]]
+	--todo incorporate "Rolls Helpers"
+	local btnRoll2= CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	btnRoll2:SetScript("OnClick", function()
+			local msg = "MS Roll for: "..frame.currentLoot.link
+			SendChatMessage(msg, "RAID_WARNING")
+    end)
+    btnRoll2:SetScript("OnEnter", function() self:ShowInfoPopup( "MS Roll") end)
+    btnRoll2:SetScript("OnLeave", self.HideInfoPopup)
+	btnRoll2:SetPoint("TOP",btnAnnounce,"TOP",0,0)
+    btnRoll2:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-310,0)
+	btnRoll2:SetHeight(25)
+	btnRoll2:SetWidth(120)
+	btnRoll2:SetText("MS Roll loot")
+    frame.btnRoll2 = btnRoll2;
+	
     local drop = CreateFrame("Frame", "LootMasterMLCandidateDropDown", frame, "UIDropDownMenuTemplate");
     drop.addon = self;
     --#region Setup the popup menu for the candidate list
