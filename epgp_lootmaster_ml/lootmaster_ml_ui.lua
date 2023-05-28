@@ -313,7 +313,7 @@ function LootMasterML:GetFrame()
                                                                    "Use this when you don't want to loot this item and close the lootmaster window.") end)
     btnDiscard:SetScript("OnLeave", self.HideInfoPopup)
 	btnDiscard:SetPoint("TOP",btnAnnounce,"TOP",0,0)
-    btnDiscard:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-10,0)
+    btnDiscard:SetPoint("RIGHT",equipHeaderFrame,"LEFT",80,0)
 	btnDiscard:SetHeight(25)
 	btnDiscard:SetWidth(120)
 	btnDiscard:SetText("Discard loot")
@@ -327,7 +327,7 @@ function LootMasterML:GetFrame()
     btnGuild:SetScript("OnEnter", function() self:ShowInfoPopup( "OS Roll") end)
     btnGuild:SetScript("OnLeave", self.HideInfoPopup)
 	btnGuild:SetPoint("TOP",btnAnnounce,"TOP",0,0)
-    btnGuild:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-160,0)
+    btnGuild:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-180,0)
 	btnGuild:SetHeight(25)
 	btnGuild:SetWidth(120)
 	btnGuild:SetText("OS Roll loot")
@@ -339,7 +339,7 @@ function LootMasterML:GetFrame()
 		SendChatMessage("KRT not found!", "RAID_WARNING")
 	end--]]
 	--todo incorporate "Rolls Helpers"
-	local btnRoll2= CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	local btnRoll2 = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	btnRoll2:SetScript("OnClick", function()
 			local msg = "MS Roll for: "..frame.currentLoot.link
 			SendChatMessage(msg, "RAID_WARNING")
@@ -352,6 +352,47 @@ function LootMasterML:GetFrame()
 	btnRoll2:SetWidth(120)
 	btnRoll2:SetText("MS Roll loot")
     frame.btnRoll2 = btnRoll2;
+	
+	local btnRoll3 = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	btnRoll3:SetScript("OnClick", function()
+			local msg = "Free Roll for: "..frame.currentLoot.link
+			SendChatMessage(msg, "RAID_WARNING")
+    end)
+    btnRoll3:SetScript("OnEnter", function() self:ShowInfoPopup( "Free Roll") end)
+    btnRoll3:SetScript("OnLeave", self.HideInfoPopup)
+	btnRoll3:SetPoint("TOP",btnAnnounce,"TOP",0,0)
+    btnRoll3:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-50,0)
+	btnRoll3:SetHeight(25)
+	btnRoll3:SetWidth(120)
+	btnRoll3:SetText("Free Roll loot")
+    frame.btnRoll3 = btnRoll3;
+	
+	local btnRoll4 = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	btnRoll4:SetScript("OnClick", function()
+			RandomRoll(1, 100)
+    end)
+    btnRoll4:SetScript("OnEnter", function() self:ShowInfoPopup( "Roll") end)
+    btnRoll4:SetScript("OnLeave", self.HideInfoPopup)
+	btnRoll4:SetPoint("TOP",btnAnnounce,"TOP",0,25)
+    btnRoll4:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-50,0)
+	btnRoll4:SetHeight(25)
+	btnRoll4:SetWidth(120)
+	btnRoll4:SetText("Roll (1-100)")
+    frame.btnRoll3 = btnRoll3;
+	
+	local btnListErrors = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	btnListErrors:SetScript("OnClick", function()
+			outputFunc = function(s) DEFAULT_CHAT_FRAME:AddMessage(s) end
+            EPGP:ReportErrors(outputFunc)
+    end)
+    btnListErrors:SetScript("OnEnter", function() self:ShowInfoPopup( "List all parsing errors.") end)
+    btnListErrors:SetScript("OnLeave", self.HideInfoPopup)
+	btnListErrors:SetPoint("TOP",btnAnnounce,"TOP",0,25)
+    btnListErrors:SetPoint("RIGHT",equipHeaderFrame,"LEFT",-180,0)
+	btnListErrors:SetHeight(25)
+	btnListErrors:SetWidth(120)
+	btnListErrors:SetText("List Errors")
+    frame.btnListErrors = btnListErrors;
 	
     local drop = CreateFrame("Frame", "LootMasterMLCandidateDropDown", frame, "UIDropDownMenuTemplate");
     drop.addon = self;
