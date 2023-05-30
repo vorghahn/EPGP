@@ -88,6 +88,7 @@ function LootMasterML:OnInitialize()
 
     -- Trap even when an items get looted
     self:RegisterEvent("CHAT_MSG_LOOT");
+    self:RegisterEvent("LOOT_OPENED");
 
     -- Trap some important system messages here
     self:RegisterEvent("RAID_ROSTER_UPDATE",            "GROUP_UPDATE");
@@ -1928,7 +1929,35 @@ function LootMasterML:CHAT_MSG_LOOT( event, message )
     self:Debug("CHAT_MSG_LOOT end");
 
 end
-
+function LootMasterML:LOOT_OPENED()
+	if not self:TrackingEnabled() then return end;
+	if LootMaster.db.profile.instantLoot then
+		--self:Print( format("NPC loot opened") )
+		for slot=1, LOOTFRAME_NUMBUTTONS do
+			local _, lootName, lootQuantity, rarity = GetLootSlotInfo(slot);
+			local link = GetLootSlotLink(slot)
+			local itemID = self:GetItemIDFromLink(link)
+			self:Print( link )
+			itemRarity = rarity or 4
+			itemBind = LootMaster:GetItemBinding( link )
+			--self:Print( format(slot) )
+			--self:Print( format(itemBind) )
+			--self:Print( format(itemRarity) )
+			if itemRarity==5 and LootMaster.db.profile.AutoShardLooter~='' then
+				LootMasterML:LootHandler(slot)
+			end
+			--self:Print( format(LootMaster.db.profile.AutoShardLooter) )
+			--self:Print( format(LootMaster.db.profile.AutoLootThreshold) )
+			--self:Print( format(LootMaster.db.profile.AutoLooter) )
+			-- See if this item should be autolooted
+			if LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.AutoLooter~='' then
+				if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity<=LootMaster.db.profile.AutoLootThreshold then
+					LootMasterML:LootHandler(slot)
+				end
+			end
+		end
+	end
+end
 --[[
 	Event triggers when the master looter opens the popup on the loot screen
 	In here we try to see what loot got selected and find the candidates for the
@@ -1937,6 +1966,10 @@ end
 	gets opened more than one time)
 ]]
 function LootMasterML:OPEN_MASTER_LOOT_LIST()
+	LootMasterML:LootHandler(LootFrame.selectedSlot)
+end
+
+function LootMasterML:LootHandler(loot_slot_number)
 
     -- Check if EPGPLM needs to track the loot.
     if not self:TrackingEnabled() then return end;
@@ -1953,8 +1986,8 @@ function LootMasterML:OPEN_MASTER_LOOT_LIST()
 	]]
 
 	-- local lootIcon, lootName, lootQuantity, rarity = GetLootSlotInfo(LootFrame.selectedSlot);
-	local _, lootName, lootQuantity, rarity = GetLootSlotInfo(LootFrame.selectedSlot);
-	local link = GetLootSlotLink(LootFrame.selectedSlot)
+	local _, lootName, lootQuantity, rarity = GetLootSlotInfo(loot_slot_number);
+	local link = GetLootSlotLink(loot_slot_number)
     local itemID = self:GetItemIDFromLink(link)
 
     -- Traverse all lootslots and see how many of this item we have in total.
@@ -2091,13 +2124,18 @@ function LootMasterML:OPEN_MASTER_LOOT_LIST()
     end
 
     -- Update the UI
-    self:ReloadMLTableForLoot( lootID )
+	if not isAutoLooted then
 
-    -- Send candidate list to monitors
-    if self:MonitorMessageRequired( lootID ) then
-        self:SendCandidateListToMonitors( lootID )
-    end;
+		self:ReloadMLTableForLoot( lootID )
+		
 
+		-- Send candidate list to monitors
+		if self:MonitorMessageRequired( lootID ) then
+			self:SendCandidateListToMonitors( lootID )
+		end;
+	else
+		self:RemoveLoot( link )
+	end
 end
 
 function LootMasterML:EPGP_DFB_toggle()

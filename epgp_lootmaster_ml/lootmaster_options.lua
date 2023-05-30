@@ -218,6 +218,14 @@ function mod:OnEnable()
                             name = "Play audio warning on loot selection popup.",
                             desc = "This will play an audible warning when the loot selection popup is opened and requires your input.",
                         },
+						
+						instantLoot = {
+                            type = "toggle",
+                            order = 21,
+                            width = 'full',
+                            name = "Start distributing loot immediately upon looting.",
+                            desc = "Auto-distribution of loot will start as soon as you loot the boss. Reduces loot time.",
+                        },
                     }
                 },
                 
