@@ -2090,6 +2090,7 @@ function LootMasterML:LootHandler(loot_slot_number)
                 end
             else
                 self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoLooter or 'nil'))
+				isAutoLooted = false
             end
         end
     elseif LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
@@ -2110,6 +2111,7 @@ function LootMasterML:LootHandler(loot_slot_number)
                 end
             else
                 self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoShardLooter or 'nil'))
+				isAutoLooted = false
             end
         end
 	end
