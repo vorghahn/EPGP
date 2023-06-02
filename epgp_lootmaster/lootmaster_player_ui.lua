@@ -12,7 +12,10 @@ function LootMaster:ShowUpdateFrame( sender, iVersion, sVersion )
         return;
     end;
     self.iLastVersionResponse = iVersion;
-    message( string.format("Auto notice from %s: please update epgp_lootmaster from curse.com. If you fail to do so you might not get loot during raids.", sender, sVersion ) )
+	local url = "https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip"
+    message( string.format("Auto notice from %s: please update EPGP from Github. If you fail to do so you might not get loot during raids. Link in chat below.",sender, sVersion) )
+	self:Print("Auto message: please install EPGPLootmaster, you will need it for loot. It is available from github |cFFFFFFFF[|HurlIndex:25"..url.."|h"..url.."|h]|r << click me");
+
 end
 
 function LootMaster:InitUI()

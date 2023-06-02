@@ -12,8 +12,8 @@ local addon         = LootMaster		-- Local instance of the addon
 --local version 	    = "0.4.9.335.16"
 local version       = tostring(GetAddOnMetadata('epgp_lootmaster', 'Version')) or 'development'
 local dVersion 	    = "2023-05-19T05:41:40Z"
-local iVersion	    = 3
-local iVersionML	  = 11
+local iVersion	    = 10
+local iVersionML	  = 16
 local _G            = _G
 
 local debug         = false
