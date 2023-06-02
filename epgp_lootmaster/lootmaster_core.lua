@@ -8,15 +8,16 @@
 ]]
 
 LootMaster          = LibStub("AceAddon-3.0"):NewAddon("EPGPLootMaster", "AceConsole-3.0", "AceComm-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceHook-3.0")
-
-local version 	    = "0.4.9.335.15"
+local addon         = LootMaster		-- Local instance of the addon
+--local version 	    = "0.4.9.335.16"
+local version       = tostring(GetAddOnMetadata('epgp_lootmaster', 'Version')) or 'development'
 local dVersion 	    = "2023-05-19T05:41:40Z"
 local iVersion	    = 3
 local iVersionML	  = 11
 local _G            = _G
 
 local debug         = false
-local addon         = LootMaster		-- Local instance of the addon
+
 
 --[[
     Returns a table serialized as a string.

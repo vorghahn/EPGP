@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: EPGP LootMaster - |cFFFF8080Core|r
 ## Author: Bushmaster-Twisting Nether-EU
-## Version: 0.4.9.335.15
+## Version: 0.4.9.335.16
 ## Notes: Full loot distributing system for EPGP.
 ## X-Category: Guild
 ## OptionalDeps: EPGP, CT_RaidTracker,CT RaidTracker 1.5 (modded by Eris)

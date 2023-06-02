@@ -2262,3 +2262,187 @@ function GetUnitID(candidate)
         end
 	end
 end
+
+
+-- ==================== MiniMap Button ==================== --
+
+do
+	LootMasterML.Minimap = {}
+	local MinimapBtn = LootMasterML.Minimap
+
+	-- Menu locals:
+	local addonMenu
+
+	-- Button & drag mode:
+	local dragMode
+
+
+	-- Cache frequently used global:
+	local abs, sqrt = math.abs, math.sqrt
+	StaticPopupDialogs["EPGPLM_EPGP_HELP"] = {
+		text = "EPGPLootmaster Help!\r\n\r\n|cFFFF8080WARNING:|r Ensure you spell the characters class correctly and use the appropriate class abbrebiation shown below."..
+		"\n\nThese instructions demonstrate how to correlate alts to mains, including alts that are not in the guild."..
+		"\r\n\r\n Guild info note format is:\n-EPGP_ALTS-\nMAIN_NAME;OOG_ALT_NAME/CLASS_ABBREV[OOG_ALT_NAME2/CLASS_ABBREV2\n-EPGP_ALTS-"..
+		"\n\nExample for a main with two out of guild alts and a main with only one:\n-EPGP_ALTS-\nFreyilius;Norliena/hu;Deviliena/de\nGrebbz;Heilo/sh\n-EPGP_ALTS-"..
+		"\n\nOfficer note format for a main is:\n EP,GP[;OOG_ALT_NAME/CLASS_ABBREV]"..
+		"\n\nExample for a main with an out of guild alt:\n0,0;Norliena/hu"..
+		"\n\nExample for Main with no out of guild alts:\n0,0\n\n"..
+		"\nOfficer note format for an alt is:\n MAIN_NAME"..
+		"\n\nExample for an in guild alt:\nGrebbz\n\n"..
+		"\n\n Class abreviation table:"..
+		"\nde=DEATHKNIGHT,\nDEATHKNIGHT=DEATHKNIGHT,\ndr=DRUID,\nDRUID=DRUID,\nhu=HUNTER,\nHUNTER=HUNTER,"..
+		"\nma=MAGE,\nMAGE=MAGE,\npa=PALADIN,\nPALADIN=PALADIN,\npr=PRIEST,\nPRIEST=PRIEST,\nro=ROGUE,\nROGUE=ROGUE,"..
+		"\nsh=SHAMAN,\nSHAMAN=SHAMAN,\nlo=WARLOCK,\nWARLOCK=WARLOCK,\nwa=WARRIOR,\nWARRIOR=WARRIOR\n",
+		button1 = OKAY,
+		OnAccept = function() end,
+		timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 0
+	};
+        
+	-- Initialize minimap menu:
+	local function OpenMenu()
+		local info = {}
+		addonMenu = addonMenu or CreateFrame("Frame", "LootMasterMLMenu", UIParent, "UIDropDownMenuTemplate")
+		addonMenu.displayMode = "MENU"
+		addonMenu.initialize = function(self, level)
+			if not level then return end
+			wipe(info)
+			if level == 1 then
+				-- Toggle EPGP frame:
+				info.text = "EPGP"
+				info.notCheckable = 1
+				info.func = function() EPGP:ToggleUI() end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				-- Toggle master loot frame:
+				info.text = "Distribute from Bags"
+				info.notCheckable = 1
+				info.func = function() LootMasterML:EPGP_DFB_slasher() end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				-- Toggle version frame:
+				info.text = "EPGP Version Check"
+				info.notCheckable = 1
+				info.func = function() LootMaster:SlashHandler( "version" ) end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				-- Toggle riad info frame:
+				info.text = "Raid Info Check"
+				info.notCheckable = 1
+				info.func = function() LootMaster:SlashHandler( "raidinfo" ) end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+								-- Separator:
+				info.disabled = 1
+				info.notCheckable = 1
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				-- Toggle settings frame:
+				info.text = "Settings"
+				info.notCheckable = 1
+				info.func = function() InterfaceOptionsFrame_OpenToCategory("EPGPLootMaster") end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+								-- Separator:
+				info.disabled = 1
+				info.notCheckable = 1
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				-- Toggle help frame:
+				info.text = "Help"
+				info.notCheckable = 1
+				info.func = function() StaticPopup_Show("EPGPLM_EPGP_HELP") end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				--[[
+				-- Separator:
+				info.disabled = 1
+				info.notCheckable = 1
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				
+				-- Clear raid icons:
+				info.text = L.StrClearIcons
+				info.notCheckable = 1
+				info.func = function() addon:ClearRaidIcons() end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)--]]
+				
+			end
+		end
+		ToggleDropDownMenu(1, nil, addonMenu, LootMasterML_MINIMAP_GUI, 0, 0)
+	end
+
+	-- Move button:
+	local function moveButton(self)
+		local centerX, centerY = Minimap:GetCenter()
+		local x, y = GetCursorPosition()
+		x, y = x / self:GetEffectiveScale() - centerX, y / self:GetEffectiveScale() - centerY
+
+		if dragMode == "free" then
+			self:ClearAllPoints()
+			self:SetPoint("CENTER", x, y)
+		else
+			centerX, centerY = abs(x), abs(y)
+			centerX, centerY = (centerX / sqrt(centerX^2 + centerY^2)) * 80, (centerY / sqrt(centerX^2 + centerY^2)) * 80
+			centerX = x < 0 and -centerX or centerX
+			centerY = y < 0 and -centerY or centerY
+			self:ClearAllPoints()
+			self:SetPoint("CENTER", centerX, centerY)
+		end
+	end
+
+	-- OnLoad minimap button:
+	function MinimapBtn:OnLoad(btn)
+		if not btn then return end
+		LootMasterML_MINIMAP_GUI:SetUserPlaced(true)
+		LootMasterML_MINIMAP_GUI:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+		LootMasterML_MINIMAP_GUI:SetScript("OnMouseDown", function(self, button)
+			if IsAltKeyDown() then
+				dragMode = "free"
+				self:SetScript("OnUpdate", moveButton)
+			elseif IsShiftKeyDown() then
+				dragMode = nil
+				self:SetScript("OnUpdate", moveButton)
+			end
+		end)
+		LootMasterML_MINIMAP_GUI:SetScript("OnMouseUp", function(self)
+			self:SetScript("OnUpdate", nil)
+		end)
+		LootMasterML_MINIMAP_GUI:SetScript("OnClick", function(self, button, down)
+			-- Ignore clicks if Shift or Alt keys are held:
+			if IsShiftKeyDown() or IsAltKeyDown() then return end
+			if button == "LeftButton" then
+				OpenMenu()
+			end
+		end)
+		LootMasterML_MINIMAP_GUI:SetScript("OnEnter", function(self)
+			GameTooltip_SetDefaultAnchor(GameTooltip, self)
+			GameTooltip:SetText("|caad4af37EPGP LootMaster|r")
+			GameTooltip:AddLine("|cffffd700Left-Click|r to access menu", 1, 1, 1)
+			--GameTooltip:AddLine(L.StrMinimapRClick, 1, 1, 1)
+			GameTooltip:AddLine("|cffffd700Shift+Click|r to move", 1, 1, 1)
+			GameTooltip:AddLine("|cffffd700Alt+Click|r for free drag and drop", 1, 1, 1)
+			GameTooltip:Show()
+		end)
+		LootMasterML_MINIMAP_GUI:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+	end
+
+	-- Toggle button visibility:
+	function LootMasterML:ToggleMinimapButton()
+		self.options.minimapButton = not self.options.minimapButton
+		if self.options.minimapButton then
+			LootMasterML_MINIMAP_GUI:Show()
+		else
+			LootMasterML_MINIMAP_GUI:Hide()
+		end
+	end
+
+	-- Hide minimap button:
+	function LootMasterML:HideMinimapButton()
+		return LootMasterML_MINIMAP_GUI:Hide()
+	end
+end
