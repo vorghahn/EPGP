@@ -11,6 +11,9 @@ function LootMaster:ShowUpdateFrame( sender, iVersion, sVersion )
         -- Only show the update message once, unless theres even a newer version found.
         return;
     end;
+	if LootMaster.db.profile.ignore_updates then
+		return
+	end
     self.iLastVersionResponse = iVersion;
 	local url = "https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip"
     message( string.format("Auto notice from %s: please update EPGP from Github. If you fail to do so you might not get loot during raids. Link in chat below.",sender, sVersion) )
