@@ -698,11 +698,11 @@ function EPGP:GetAlt(name, i)
 end
 
 function EPGP:GetRank(name)
-  if oog_alts[name] ~= nil then
-    return oog_alts[name]["rank"]
-  else
-    return GS.GetRank(name)
-  end
+	if oog_alts[name] ~= nil then
+		return oog_alts[name]["rank"]
+	else
+		return GS:GetRank(name)
+	end
 end
 
 function EPGP:GetMain(name)
@@ -838,6 +838,10 @@ function EPGP:GetEPGP(name)
   if ep_data[name] then
     return ep_data[name], gp_data[name] + global_config.base_gp, main
   end
+end
+
+function EPGP:GetMembers()
+	return ep_data
 end
 
 function EPGP:GetClass(name)

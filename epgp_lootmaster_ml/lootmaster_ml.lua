@@ -2355,7 +2355,7 @@ do
 				info.func = function() StaticPopup_Show("EPGPLM_EPGP_HELP") end
 				UIDropDownMenu_AddButton(info, level)
 				wipe(info)
-				--[[
+				
 				-- Separator:
 				info.disabled = 1
 				info.notCheckable = 1
@@ -2363,11 +2363,11 @@ do
 				wipe(info)
 				
 				-- Clear raid icons:
-				info.text = L.StrClearIcons
+				info.text = "Export Data"
 				info.notCheckable = 1
-				info.func = function() addon:ClearRaidIcons() end
+				info.func = function() EPGP:EPGP_Export_Popup("guild") end
 				UIDropDownMenu_AddButton(info, level)
-				wipe(info)--]]
+				wipe(info)
 				
 			end
 		end

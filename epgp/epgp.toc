@@ -2,7 +2,7 @@
 ## Title: EPGP
 ## Notes: Effort Points/Gear Points Loot System
 ## Author: Alkis Evlogimenos
-## Version: 5.5.19.335.17
+## Version: 5.5.19.335.18
 ## OptionalDeps: DBM-Core BigWigs_Core DXE
 ## SavedVariables: EPGP_DB
 ## X-Category: Guild
@@ -39,6 +39,7 @@ localization\localization.xml
 epgp.lua
 epgp_options.lua
 epgp_recurring.lua
+epgp_exporter.lua
 
 announce.lua
 
@@ -53,3 +54,4 @@ warnings.lua
 whisper.lua
 
 debug.xml
+export_frame.xml
