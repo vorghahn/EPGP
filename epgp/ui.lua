@@ -877,6 +877,38 @@ local function AddEPControls(frame, withRecurring)
     frame.recurring = recurring
     frame.incButton = incButton
     frame.decButton = decButton
+	
+	  	local offline_chk = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+		offline_chk:SetWidth(20)
+		offline_chk:SetHeight(20)
+		offline_chk:SetPoint("TOP", recurring, "BOTTOMLEFT")
+		offline_chk:SetPoint("LEFT", recurring, "LEFT")
+		offline_chk:SetChecked(EPGP.db.profile.offline)
+		offline_chk:SetScript(
+			"OnClick",
+			function (self)
+				EPGP.db.profile.offline = not EPGP.db.profile.offline
+			end)
+
+		local offlabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+		offlabel:SetText("Online only")
+		offlabel:SetPoint("LEFT", offline_chk, "RIGHT")
+		
+		local outofzone_chk = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+		outofzone_chk:SetWidth(20)
+		outofzone_chk:SetHeight(20)
+		outofzone_chk:SetPoint("TOP", recurring, "BOTTOMLEFT")
+		outofzone_chk:SetPoint("LEFT", button)
+		outofzone_chk:SetChecked(EPGP.db.profile.inzone)
+		outofzone_chk:SetScript(
+			"OnClick",
+			function (self)
+				EPGP.db.profile.inzone = not EPGP.db.profile.inzone
+			end)
+
+		local zonelabel = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+		zonelabel:SetText("In zone only")
+		zonelabel:SetPoint("LEFT", outofzone_chk, "RIGHT")
   end
 
   frame:SetHeight(
@@ -886,7 +918,7 @@ local function AddEPControls(frame, withRecurring)
     otherEditBox:GetHeight() +
     label:GetHeight() +
     button:GetHeight() +
-    (withRecurring and frame.recurring:GetHeight() or 0))
+    (withRecurring and frame.recurring:GetHeight()+24 or 0))
 
   frame.reasonLabel = reasonLabel
   frame.dropDown = dropDown
@@ -895,6 +927,10 @@ local function AddEPControls(frame, withRecurring)
   frame.label = label
   frame.editBox = editBox
   frame.button = button
+  frame.offline_chk = offline_chk
+  frame.offlabel = offlabel
+  frame.outofzone_chk = outofzone_chk
+  frame.zonelabel = zonelabel
 
   frame:SetScript(
     "OnShow",
@@ -988,7 +1024,7 @@ local function CreateEPGPSideFrame2()
 
   f:Hide()
   f:SetWidth(225)
-  f:SetHeight(165)
+  f:SetHeight(190)
   f:SetPoint("BOTTOMLEFT", EPGPFrame, "BOTTOMRIGHT", -33, 72)
 
   f:SetBackdrop(
@@ -1016,7 +1052,7 @@ local function CreateEPGPSideFrame2()
         reason = epFrame.otherEditBox:GetText()
       end
       local amount = epFrame.editBox:GetNumber()
-      EPGP:IncMassEPBy(reason, amount)
+      EPGP:IncMassEPBy(reason, amount, true)
     end)
 
   epFrame.recurring:SetScript(

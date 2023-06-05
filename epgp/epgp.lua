@@ -966,15 +966,50 @@ function EPGP:GetMain(name)
   return main_data[name] or name
 end
 
-function EPGP:IncMassEPBy(reason, amount)
+function EPGP:IncMassEPBy(reason, amount, manual)
   local awarded = {}
   local extras_awarded = {}
   local extras_amount = math.floor(global_config.extras_p * 0.01 * amount)
   local extras_reason = reason .. " - " .. L["Standby"]
-
+  
   for i=1,EPGP:GetNumMembers() do
     local name = EPGP:GetMember(i)
-    if EPGP:IsMemberInAwardList(name) then
+	mlzone = GetRealZoneText()
+	zone=''
+	inzone=false
+	if UnitIsConnected(name)==1 then
+		online = true
+		for i=1, GetNumRaidMembers() do
+			name1, rank, subgroup, level, class, fileName, zone1,_ = GetRaidRosterInfo(i)
+			if name==name1 then
+				zone = zone1 
+				if zone==mlzone then
+					inzone=true
+				end
+			end
+		end
+	else
+		online = false
+	end
+	if EPGP.db.profile.inzone == false then
+		inzone = true
+	end
+	if EPGP.db.profile.offline == false then
+		online = true
+	end
+	EPGP:Print(manual)
+	--[[if not manual then
+		inzone = true
+		online = true
+		EPGP:Print("Not manual")
+	end
+	--if online and inzone then
+	--	EPGP:Print(name, zone, mlzone)
+	--else
+	--needs a prompt
+	--	a = 1
+	end--]]
+    if EPGP:IsMemberInAwardList(name) and ((online and inzone) or not manual) then
       -- EPGP:GetMain() will return the input name if it doesn't find a main,
       -- so we can't use it to validate that this actually is a character who
       -- can recieve EP.
@@ -1023,6 +1058,8 @@ function EPGP:OnInitialize()
       show_everyone = false,
       sort_order = "PR",
       recurring_ep_period_mins = 15,
+	  offline = false,
+	  inzone = false,
     }
   }
   db:RegisterDefaults(defaults)
