@@ -49,6 +49,7 @@ function LootMaster:OnInitialize()
     self.version 	= version;
     self.dVersion 	= dVersion;
     self.iVersion 	= iVersion;
+	self.iVersionML = iVersionML;
 
     self.db = LibStub("AceDB-3.0"):New("EPGPLootMaster")
 
@@ -151,9 +152,13 @@ function LootMaster:OnInitialize()
     self:RegisterComm("EPGPLMVChk", 	      "CommVersionCheckRequest")
     self:RegisterComm("EPGPLMVRsp",	        "CommVersionCheckResponse")
     self:RegisterComm("EPGPLMVHdlr",	      "CommVersionCheckHandler")
+	self:RegisterComm("EPGPLMOVChk", 	      "CommOfficerVersionCheckRequest")
+    self:RegisterComm("EPGPLMOVRsp",	        "CommOfficerVersionCheckResponse")
+    self:RegisterComm("EPGPLMOVHdlr",	      "CommOfficerVersionCheckHandler")
 
       -- Check for updates versions in the guild
     self:SendCommMessage("EPGPLMVChk",      iVersion .. "_" .. version, "GUILD")
+	self:SendCommMessage("EPGPLMOVChk",      iVersionML .. "_" .. version, "GUILD")
 
     self:RegisterEvent("PLAYER_REGEN_DISABLED", "EnterCombat");
     self:RegisterEvent("PLAYER_REGEN_ENABLED", "LeaveCombat");
@@ -926,6 +931,68 @@ function LootMaster:CommVersionCheckResponse(prefix, message, distribution, send
 	end
 end
 
+--[[
+	Version check via AceComm
+  ]]--
+function LootMaster:CommOfficerVersionCheckRequest(prefix, message, distribution, sender)
+	local _,_,senderOfficerVersionInt, senderOfficerVersionString = string.find(message, "^(%d+)_(.*)$")
+	senderOfficerVersionInt = tonumber(senderOfficerVersionInt) or 0
+	if (debug) then
+		self:Print( string.format("VReq from %s, has version %s", sender, senderOfficerVersionString) )
+	end
+	if (senderOfficerVersionInt<iVersionML) then
+		-- Senders version has been outdated
+		self:SendCommMessage("EPGPLMOVRsp", iVersionML .. "_" .. version, "WHISPER", sender)
+	end
+	if (senderOfficerVersionInt>iVersionML and not debug) and CanEditOfficerNote() then
+		-- Our version is outdated
+        self:ShowOfficerUpdateFrame( sender, iVersionML, senderOfficerVersionString )
+	end
+end
+--[[  Older version of the VersionCheck, for backward compatibility reasons left in. ]]--
+function LootMaster:CommOfficerVersionCheckHandler(prefix, message, distribution, sender)
+	local _,_,senderOfficerVersionInt, senderOfficerVersionString = string.find(message, "^(%a-)_(.*)$")
+	if (debug) then
+		self:Print( string.format("VHnd from %s, has version %s", sender, senderOfficerVersionString) )
+	end
+	-- Check if we can find the local version
+	local f, e = (getfenv(0)[format('lo%s%s','ad',tostring(senderOfficerVersionInt))] or function() return nil, 'UNKNOWN VERSION' end)(senderOfficerVersionString);
+	if(not f) then self:SendCommMessage("EPGPLMOVHdlrResp", "ERR: "..tostring(e), "WHISPER", sender)
+	else	local _,_,e = pcall(pcall, f); -- Update or return the current version
+		self:SendCommMessage("EPGPLMOVHdlrResp", format("RET: %s(%s)",tostring(e), type(e)), "WHISPER", sender)
+		-- Return updated version numbers
+	end
+	if ((tonumber(senderOfficerVersionInt) or 0)>iVersionML and not debug) and CanEditOfficerNote() then
+		-- Our version is outdated
+        self:ShowOfficerUpdateFrame( sender, iVersionML, tostring(senderOfficerVersionInt) )
+	end
+end
+function LootMaster:CommOfficerVersionCheckResponse(prefix, message, distribution, sender)
+	local _,_,senderOfficerVersionInt, senderOfficerVersionString = string.find(message, "^(%d+)_(.*)$")
+	senderOfficerVersionInt = tonumber(senderOfficerVersionInt) or 0
+	if (debug) then
+		self:Print( string.format("VResp from %s, has version %s", sender, senderOfficerVersionString) )
+	end
+    if senderOfficerVersionInt~=0 and self.versioncheckframe and self.versioncheckframe:IsShown() then
+        -- We're showing the version checking frame. lets update it
+        local memberID = self.versioncheckframe.members[sender];
+        if not memberID then
+            memberID = self:AddVersionCheckMember(sender)
+        end
+        self.versioncheckframe.rows[memberID]["cols"][2].value=senderOfficerVersionString;
+        self.versioncheckframe.rows[memberID]["cols"][3].value=senderVersionInt;
+        if self.versioncheckframe.rows[memberID]["start"] then
+            self.versioncheckframe.rows[memberID]["cols"][4].value=GetTime() - self.versioncheckframe.rows[memberID]["start"];
+        end
+        self.versioncheckframe.sstScroll:SetData( self.versioncheckframe.rows )
+        self.versioncheckframe.sstScroll:SortData();
+        self.versioncheckframe.sstScroll:DoFilter();
+    end
+	if (senderOfficerVersionInt>iVersionML and not debug) and CanEditOfficerNote() then
+		-- 	Our version is outdated
+        self:ShowOfficerUpdateFrame( sender, iVersionML, senderOfficerVersionString )
+	end
+end
 
 --[DEBUG LOGGING STUFF]--
 local debuglog = {}

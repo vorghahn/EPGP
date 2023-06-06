@@ -17,7 +17,23 @@ function LootMaster:ShowUpdateFrame( sender, iVersion, sVersion )
     self.iLastVersionResponse = iVersion;
 	local url = "https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip"
     message( string.format("Auto notice from %s: please update EPGP from Github. If you fail to do so you might not get loot during raids. Link in chat below.",sender, sVersion) )
-	self:Print("Auto message: please install EPGPLootmaster, you will need it for loot. It is available from github |cFFFFFFFF[|HurlIndex:25"..url.."|h"..url.."|h]|r << click me");
+	self:Print("Auto message: please update your EPGPLootmaster, you will need it for loot. It is available from github |cFFFFFFFF[|HurlIndex:25"..url.."|h"..url.."|h]|r << click me");
+
+end
+
+-- Show an update notice.    
+function LootMaster:ShowOfficerUpdateFrame( sender, iVersionML, sVersion )
+    if self.iLastOfficerVersionResponse and self.iLastOfficerVersionResponse>=iVersionML then
+        -- Only show the update message once, unless theres even a newer version found.
+        return;
+    end;
+	if LootMaster.db.profile.ignore_updates then
+		return
+	end
+    self.iLastOfficerVersionResponse = iVersionML;
+	local url = "https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip"
+    message( string.format("Auto notice from %s: please update EPGP from Github. Functions/changes have been added to assist with Master Looting during raids. Link in chat below.",sender, sVersion) )
+	self:Print("Auto message: please update your EPGPLootmaster, you will need it for loot. It is available from github |cFFFFFFFF[|HurlIndex:25"..url.."|h"..url.."|h]|r << click me");
 
 end
 
