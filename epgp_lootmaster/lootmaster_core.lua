@@ -98,6 +98,7 @@ function LootMaster:OnInitialize()
         allowCandidateNotes = true,
         monitorIncomingThreshold = 3,
         audioWarningOnSelection = true,
+		map_btn = true,
         use_epgplootmaster = 'ask'
       }
     })

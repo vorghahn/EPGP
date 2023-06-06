@@ -2269,6 +2269,7 @@ end
 do
 	LootMasterML.Minimap = {}
 	local MinimapBtn = LootMasterML.Minimap
+	local btn_status = LootMaster.db.profile.map_btn
 
 	-- Menu locals:
 	local addonMenu
@@ -2395,7 +2396,13 @@ do
 
 	-- OnLoad minimap button:
 	function MinimapBtn:OnLoad(btn)
+		--if not LootMaster.db.profile.map_btn then return end
 		if not btn then return end
+		if LootMaster.db.profile.map_btn then
+			LootMasterML_MINIMAP_GUI:Show()
+		else
+			LootMasterML_MINIMAP_GUI:Hide()
+		end
 		LootMasterML_MINIMAP_GUI:SetUserPlaced(true)
 		LootMasterML_MINIMAP_GUI:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 		LootMasterML_MINIMAP_GUI:SetScript("OnMouseDown", function(self, button)
@@ -2433,8 +2440,8 @@ do
 
 	-- Toggle button visibility:
 	function LootMasterML:ToggleMinimapButton()
-		self.options.minimapButton = not self.options.minimapButton
-		if self.options.minimapButton then
+		LootMaster.db.profile.map_btn = not LootMaster.db.profile.map_btn
+		if LootMaster.db.profile.map_btn then
 			LootMasterML_MINIMAP_GUI:Show()
 		else
 			LootMasterML_MINIMAP_GUI:Hide()

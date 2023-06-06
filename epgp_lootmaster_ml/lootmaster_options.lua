@@ -232,6 +232,16 @@ function mod:OnEnable()
                             name = "Ignore Updates",
                             desc = "Prevent notifications to update this addon.",
                         },
+						
+						map_btn = {
+                            type = "execute",
+                            order = 23,
+                            name = "Toggle Minimap Button",
+                            desc = "Toggle the display the minimap button.",
+							func = function(info)
+                                LootMasterML:ToggleMinimapButton()
+                            end,
+                        },
                         },
                     }
                 },
