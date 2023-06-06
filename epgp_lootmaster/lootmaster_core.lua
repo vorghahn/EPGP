@@ -56,21 +56,30 @@ function LootMaster:OnInitialize()
     self.db:RegisterDefaults(
     {
       profile = {
-        buttonNum         = 4,
+        buttonNum         = 3,
 
-        button1           = 'Mainspec',
+        button1           = 'Major Upgrade',
         button1_color     = '55f00f',
         button1_fallback  = 'NEED',
+		button1_gp		  = '100%',
+		button1_gpValue   = 100,
+		button1_gpIsPercentage = true,
 
         button2           = 'Minor Upgrade',
         button2_color     = '41831d',
         button2_fallback  = 'MINORUPGRADE',
+		button2_gp		  = '35%',
+		button2_gpValue   = 35,
+		button2_gpIsPercentage = true,
 
         button3           = 'Offspec',
         button3_color     = 'ffc01b',
         button3_fallback  = 'OFFSPEC',
+		button3_gp		  = '0%',
+		button3_gpValue   = 0,
+		button3_gpIsPercentage = true,
 
-        button4           = 'Greed',
+        button4           = 'Button 4',
         button4_color     = 'c65b00',
         button4_fallback  = 'GREED',
 
@@ -82,7 +91,7 @@ function LootMaster:OnInitialize()
         button6           = 'Button 6',
         button7           = 'Button 7',
 
-        hideResponses = false,
+        hideResponses = true,
         auto_announce_threshold = 4,
         AutoLootThreshold = 2,
         hideOnSelection = true,
@@ -92,13 +101,14 @@ function LootMaster:OnInitialize()
         monitorSend = true,
         monitorSendAssistantOnly = false,
         monitorThreshold = 2,
-        ignoreResponseCorrections = false,
+        ignoreResponseCorrections = true,
         hideMLOnCombat = true,
         hideSelectionOnCombat = false,
         allowCandidateNotes = true,
         monitorIncomingThreshold = 3,
         audioWarningOnSelection = true,
 		map_btn = true,
+		instantLoot = true,
         use_epgplootmaster = 'ask'
       }
     })
