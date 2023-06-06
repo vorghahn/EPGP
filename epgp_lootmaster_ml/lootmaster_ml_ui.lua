@@ -697,12 +697,12 @@ function LootMasterML:UpdateUI( updateItemLink )
                 -- If already displaying, do nothing.
                 self:DisplayLoot(item)
                 breakMe = true
-                break
+                --break
             elseif not self.frame.currentLoot then
                 -- Nothing is onscreen, display the first item
                 self:DisplayLoot(item)
                 breakMe = true
-                break
+                --break
             end
 
             if visibleLootButtons>=LOOTBUTTON_MAXNUM then breakMe = true; break end
