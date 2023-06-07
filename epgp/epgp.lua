@@ -997,7 +997,6 @@ function EPGP:IncMassEPBy(reason, amount, manual)
 	if EPGP.db.profile.offline == false then
 		online = true
 	end
-	EPGP:Print(manual)
 	--[[if not manual then
 		inzone = true
 		online = true

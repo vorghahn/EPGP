@@ -1937,7 +1937,6 @@ function LootMasterML:LOOT_OPENED()
 			local _, lootName, lootQuantity, rarity = GetLootSlotInfo(slot);
 			local link = GetLootSlotLink(slot)
 			local itemID = self:GetItemIDFromLink(link)
-			self:Print( link )
 			itemRarity = rarity or 4
 			itemBind = LootMaster:GetItemBinding( link )
 			--self:Print( format(slot) )
@@ -2178,7 +2177,6 @@ function LootMasterML:BtnSelectItem(btn)
 			ClearCursor()
 			_, _, _, _, _, _, itemLink = GetContainerItemInfo(EPGP_DFB_BagId, EPGP_DFB_SlotId)
 			if itemLink then
-				EPGP_DFB_print(itemLink, 1);
 				EPGP_DFB_LootFrame_Update(itemLink)
 			end
 		end
