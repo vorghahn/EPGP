@@ -225,6 +225,8 @@ function mod:OnEnable()
                             width = 'full',
                             name = "Start distributing loot immediately upon looting.",
                             desc = "Auto-distribution of loot will start as soon as you loot the boss. Reduces loot time.",
+                        },
+						
 						ignore_updates = {
                             type = "toggle",
                             order = 22,
@@ -242,6 +244,13 @@ function mod:OnEnable()
                                 LootMasterML:ToggleMinimapButton()
                             end,
                         },
+						
+						elvui = {
+                            type = "toggle",
+                            order = 24,
+                            width = 'full',
+                            name = "Elvui Skin",
+                            desc = "Certain frames will not automatically change to the ELVUI theme.",
                         },
                     }
                 },
