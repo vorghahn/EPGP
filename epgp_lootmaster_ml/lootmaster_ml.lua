@@ -55,11 +55,10 @@ StaticPopupDialogs["EPGPLOOTMASTER_ASK_TRACKING"] = {
 	button2 = NO,
 	OnAccept = function()
 		LootMasterML:EnableTracking()
-        LootMaster:Print('You have enabled loot tracking for this raid')
+        
 	end,
 	OnCancel = function()
 	    LootMasterML:DisableTracking()
-        LootMaster:Print('You have disabled loot tracking for this raid')
 	end,
 	OnShow = function()
 	end,
@@ -175,10 +174,12 @@ function LootMasterML:OnEnable()
 end
 
 function LootMasterML:EnableTracking()
+	LootMaster:Print('You have enabled loot tracking.')
     self.trackingEnabled = true;
 end
 
 function LootMasterML:DisableTracking()
+	LootMaster:Print('You have disabled loot tracking.')
     self.trackingEnabled = false;
 end
 
