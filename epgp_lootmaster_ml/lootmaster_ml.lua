@@ -1738,8 +1738,6 @@ function LootMasterML:GiveManualLootToCandidate( link, candidate, lootType, gp )
 end
 
 function chatMsgLoot(candidate, itemLink)
-	--StaticPopup_Show("EPGPLOOTMASTER_ASK_TRACKING")
-	--Print(candidate, itemLink)
 	if candidate and itemLink then
 		EmulateEvent('CHAT_MSG_LOOT', LOOT_ITEM:format(candidate, itemLink), '', '', '', '')
 	end

@@ -111,7 +111,7 @@ function GenericExporter:MakeHeader(Format,Header)
 	if Format=='html' then
 		out=out:gsub("<","&lt;")
 		out=out:gsub(">","&gt;")
-		out=string.gsub(out,'EPGP','<A HREF="https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip">EPGP</A>')
+		out=string.gsub(out,'EPGP','<A HREF="https://github.com/vorghahn/EPGP/releases/latest/download/EPGP.zip">EPGP</A>')
 	end
 	out=string.gsub(out,"$TIME",date())
 	out=string.gsub(out,"$GUILDNAME",EPGP_GUILD_NAME or '')

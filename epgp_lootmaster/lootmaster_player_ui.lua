@@ -15,7 +15,7 @@ function LootMaster:ShowUpdateFrame( sender, iVersion, sVersion )
 		return
 	end
     self.iLastVersionResponse = iVersion;
-	local url = "https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip"
+	local url = "https://github.com/vorghahn/EPGP/releases/latest/download/EPGP.zip"
     message( string.format("Auto notice from %s: please update EPGP from Github. If you fail to do so you might not get loot during raids. Link in chat below.",sender, sVersion) )
 	self:Print("Auto message: please update your EPGPLootmaster, you will need it for loot. It is available from github |cFFFFFFFF[|HurlIndex:25"..url.."|h"..url.."|h]|r << click me");
 
@@ -31,7 +31,7 @@ function LootMaster:ShowOfficerUpdateFrame( sender, iVersionML, sVersion )
 		return
 	end
     self.iLastOfficerVersionResponse = iVersionML;
-	local url = "https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip"
+	local url = "https://github.com/vorghahn/EPGP/releases/latest/download/EPGP.zip"
     message( string.format("Auto notice from %s: please update EPGP from Github. Functions/changes have been added to assist with Master Looting during raids. Link in chat below.",sender, sVersion) )
 	self:Print("Auto message: please update your EPGPLootmaster, you will need it for loot. It is available from github |cFFFFFFFF[|HurlIndex:25"..url.."|h"..url.."|h]|r << click me");
 
@@ -604,7 +604,7 @@ function LootMaster:VersionActionClick(name)
     local rowID = self.versioncheckframe.members[name];
     if not rowID then return end;
     if self.versioncheckframe.rows[rowID].cols[3].value == 0 then
-        SendChatMessage("Auto message: please install EPGPLootmaster, you will need it for loot. It is available from github https://github.com/vorghahn/EPGP/archive/refs/heads/main.zip", "WHISPER", nil, name); --curse.com:  http://wow.curse.com/downloads/wow-addons/details/epgp_lootmaster.aspx", "WHISPER", nil, name);
+        SendChatMessage("Auto message: please install EPGPLootmaster, you will need it for loot. It is available from github https://github.com/vorghahn/EPGP/releases/latest/download/EPGP.zip", "WHISPER", nil, name); --curse.com:  http://wow.curse.com/downloads/wow-addons/details/epgp_lootmaster.aspx", "WHISPER", nil, name);
     end
 end
 
