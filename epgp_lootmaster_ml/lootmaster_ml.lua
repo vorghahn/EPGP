@@ -161,7 +161,7 @@ function LootMasterML:OnInitialize()
     end
 
     -- Just to be sure, enable the tracking.
-    self:EnableTracking()
+    --self:EnableTracking()
 end
 
 function LootMasterML:OnEnable()
@@ -1853,6 +1853,9 @@ function LootMasterML:GROUP_UPDATE()
     lootmethod, mlPartyID, mlRaidID = GetLootMethod();
     if lootmethod ~= 'master' then
         self.current_ml = nil;
+		if self:TrackingEnabled() then
+			self:DisableTracking()
+		end
         return
     end;
     if mlRaidID then
