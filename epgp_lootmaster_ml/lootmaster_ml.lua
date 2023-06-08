@@ -1954,7 +1954,7 @@ function LootMasterML:LOOT_OPENED()
 			--self:Print( format(LootMaster.db.profile.AutoLooter) )
 			-- See if this item should be autolooted
 			if LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.AutoLooter~='' then
-				if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity<=LootMaster.db.profile.AutoLootThreshold then
+				if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity > 0 and itemRarity<=LootMaster.db.profile.AutoLootThreshold then
 					LootMasterML:LootHandler(slot)
 				end
 			end
