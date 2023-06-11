@@ -1936,27 +1936,31 @@ function LootMasterML:CHAT_MSG_LOOT( event, message )
 end
 function LootMasterML:LOOT_OPENED()
 	if not self:TrackingEnabled() then return end;
-	if LootMaster.db.profile.instantLoot then
+	if IsAltKeyDown() then
+		return
+	elseif LootMaster.db.profile.instantLoot then
 		--self:Print( format("NPC loot opened") )
 		for slot=1, LOOTFRAME_NUMBUTTONS do
 			local _, lootName, lootQuantity, rarity = GetLootSlotInfo(slot);
 			local link = GetLootSlotLink(slot)
 			local itemID = self:GetItemIDFromLink(link)
-			itemRarity = rarity or 4
+			itemRarity = rarity
 			itemBind = LootMaster:GetItemBinding( link )
-			--self:Print( format(slot) )
-			--self:Print( format(itemBind) )
-			--self:Print( format(itemRarity) )
-			if LootMaster.db.profile.AutoShardLooterEnable and itemRarity==5 and LootMaster.db.profile.AutoShardLooter~='' then
-				LootMasterML:LootHandler(slot)
-			end
-			--self:Print( format(LootMaster.db.profile.AutoShardLooter) )
-			--self:Print( format(LootMaster.db.profile.AutoLootThreshold) )
-			--self:Print( format(LootMaster.db.profile.AutoLooter) )
-			-- See if this item should be autolooted
-			if LootMaster.db.profile.AutoLootEnable and LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.AutoLooter~='' then
-				if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity > 0 and itemRarity<=LootMaster.db.profile.AutoLootThreshold then
-					LootMasterML:LootHandler(slot)
+			if itemRarity==5 or (not itemBind or itemBind=='use' or itemBind=='equip') then
+				--self:Print( format(slot) )
+				--self:Print( format(itemBind) )
+				--self:Print( format(itemRarity) )
+				if LootMaster.db.profile.AutoShardLooterEnable and itemRarity==5 and LootMaster.db.profile.AutoShardLooter~='' then
+					LootMasterML:LootHandler(slot, true)
+				end
+				--self:Print( format(LootMaster.db.profile.AutoShardLooter) )
+				--self:Print( format(LootMaster.db.profile.AutoLootThreshold) )
+				--self:Print( format(LootMaster.db.profile.AutoLooter) )
+				-- See if this item should be autolooted
+				if LootMaster.db.profile.AutoLootEnable and LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.AutoLooter~='' then
+					if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity > 0 and itemRarity<=LootMaster.db.profile.AutoLootThreshold then
+						LootMasterML:LootHandler(slot, true)
+					end
 				end
 			end
 		end
@@ -1970,10 +1974,10 @@ end
 	gets opened more than one time)
 ]]
 function LootMasterML:OPEN_MASTER_LOOT_LIST()
-	LootMasterML:LootHandler(LootFrame.selectedSlot)
+	LootMasterML:LootHandler(LootFrame.selectedSlot, false)
 end
 
-function LootMasterML:LootHandler(loot_slot_number)
+function LootMasterML:LootHandler(loot_slot_number, instant)
 
     -- Check if EPGPLM needs to track the loot.
     if not self:TrackingEnabled() then return end;
@@ -2094,7 +2098,9 @@ function LootMasterML:LootHandler(loot_slot_number)
                 end
             else
                 self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoLooter or 'nil'))
-				isAutoLooted = false
+				if instant then 
+					isAutoLooted = false
+				end
             end
         end
     elseif LootMaster.db.profile.AutoShardLooterEnable and LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
@@ -2115,7 +2121,9 @@ function LootMasterML:LootHandler(loot_slot_number)
                 end
             else
                 self:Print(format('Auto looting of %s to %s failed. Not a candidate for this loot.', link or 'nil', LootMaster.db.profile.AutoShardLooter or 'nil'))
-				isAutoLooted = false
+				if instant then
+					isAutoLooted = false
+				end
             end
         end
 	end
@@ -2130,17 +2138,22 @@ function LootMasterML:LootHandler(loot_slot_number)
     end
 
     -- Update the UI
-	if not isAutoLooted then
-
+	if instant then
+		if not isAutoLooted then
+			self:ReloadMLTableForLoot( lootID )
+			-- Send candidate list to monitors
+			if self:MonitorMessageRequired( lootID ) then
+				self:SendCandidateListToMonitors( lootID )
+			end;
+		else
+			self:RemoveLoot( link )
+		end
+	else
 		self:ReloadMLTableForLoot( lootID )
-		
-
 		-- Send candidate list to monitors
 		if self:MonitorMessageRequired( lootID ) then
 			self:SendCandidateListToMonitors( lootID )
 		end;
-	else
-		self:RemoveLoot( link )
 	end
 end
 
