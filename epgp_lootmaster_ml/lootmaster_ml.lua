@@ -1761,7 +1761,10 @@ function LootMasterML:OnMasterLooterChange(masterlooter)
     self.current_ml = masterlooter;
 
     -- if player is not the current master looter, then just return.
-    if masterlooter~=UnitName('player') then return end;
+    if masterlooter~=UnitName('player') then
+		self:DisableTracking();
+		return
+	end;
 
     -- Show a message here, based on the current settings
     if LootMaster.db.profile.use_epgplootmaster == 'enabled' then
