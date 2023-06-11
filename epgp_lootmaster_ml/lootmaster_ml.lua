@@ -973,12 +973,12 @@ function LootMasterML:AddLoot( link, mayDistribute, quantity )
   loot.buttonString = buttonString
 
   -- See if this item should be autolooted
-  if itemRarity==5 and db.AutoShardLooter~='' then
+  if db.AutoShardLooterEnable and itemRarity==5 and db.AutoShardLooter~='' then
       loot.autoShardLootable = true
   end
   
   -- See if this item should be autolooted
-  if db.AutoLootThreshold~=0 and db.AutoLooter~='' then
+  if db.AutoLootEnable and db.AutoLootThreshold~=0 and db.AutoLooter~='' then
       if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity<=db.AutoLootThreshold then
           loot.autoLootable = true
       end
@@ -1947,14 +1947,14 @@ function LootMasterML:LOOT_OPENED()
 			--self:Print( format(slot) )
 			--self:Print( format(itemBind) )
 			--self:Print( format(itemRarity) )
-			if itemRarity==5 and LootMaster.db.profile.AutoShardLooter~='' then
+			if LootMaster.db.profile.AutoShardLooterEnable and itemRarity==5 and LootMaster.db.profile.AutoShardLooter~='' then
 				LootMasterML:LootHandler(slot)
 			end
 			--self:Print( format(LootMaster.db.profile.AutoShardLooter) )
 			--self:Print( format(LootMaster.db.profile.AutoLootThreshold) )
 			--self:Print( format(LootMaster.db.profile.AutoLooter) )
 			-- See if this item should be autolooted
-			if LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.AutoLooter~='' then
+			if LootMaster.db.profile.AutoLootEnable and LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.AutoLooter~='' then
 				if (not itemBind or itemBind=='use' or itemBind=='equip') and itemRarity > 0 and itemRarity<=LootMaster.db.profile.AutoLootThreshold then
 					LootMasterML:LootHandler(slot)
 				end
@@ -2076,7 +2076,7 @@ function LootMasterML:LootHandler(loot_slot_number)
 
     -- Lets see if we have to autoloot
     local isAutoLooted = false
-    if LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.profile.AutoLooter~='' and self.lootTable[lootID].autoLootable then
+    if LootMaster.db.profile.AutoLootEnable and LootMaster.db.profile.AutoLootThreshold~=0 and LootMaster.db.profile.AutoLooter~='' and self.lootTable[lootID].autoLootable then
         -- loot is below or equal to AutoLootThreshold and matches the autoLooter requirements
         -- try to give the loot.
 
@@ -2097,7 +2097,7 @@ function LootMasterML:LootHandler(loot_slot_number)
 				isAutoLooted = false
             end
         end
-    elseif LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
+    elseif LootMaster.db.profile.AutoShardLooterEnable and LootMaster.db.profile.AutoShardLooter~='' and self.lootTable[lootID].autoShardLootable then
 	    -- loot is below or equal to AutoLootThreshold and matches the autoLooter requirements
         -- try to give the loot.
 
