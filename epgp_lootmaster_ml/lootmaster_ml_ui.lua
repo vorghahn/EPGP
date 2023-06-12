@@ -57,6 +57,20 @@ function LootMasterML:HideInfoPopup()
 	GameTooltip:Hide()
 end
 
+function getChannel()
+	channel = "SAY"
+	if GetNumPartyMembers() > 0 then
+		channel = "PARTY"
+	end
+	if (GetNumRaidMembers() > 0) then
+		channel = "RAID"
+	end
+	if IsRaidOfficer() then
+		channel = "RAID_WARNING"
+	end
+	return channel
+end
+
 function LootMasterML:GetFrame()
 
     if self.frame then
@@ -322,7 +336,7 @@ function LootMasterML:GetFrame()
     local btnGuild = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	btnGuild:SetScript("OnClick", function()
 			local msg = "OS Roll for: "..frame.currentLoot.link
-            SendChatMessage(msg, "RAID_WARNING")
+            SendChatMessage(msg, getChannel())
     end)
     btnGuild:SetScript("OnEnter", function() self:ShowInfoPopup( "OS Roll") end)
     btnGuild:SetScript("OnLeave", self.HideInfoPopup)
@@ -333,16 +347,10 @@ function LootMasterML:GetFrame()
 	btnGuild:SetText("OS Roll loot")
     frame.btnGuild = btnGuild;
 	
-	--[[if KRT then
-		SendChatMessage("KRT Found!", "RAID_WARNING")
-	else
-		SendChatMessage("KRT not found!", "RAID_WARNING")
-	end--]]
-	--todo incorporate "Rolls Helpers"
 	local btnRoll2 = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	btnRoll2:SetScript("OnClick", function()
 			local msg = "MS Roll for: "..frame.currentLoot.link
-			SendChatMessage(msg, "RAID_WARNING")
+			SendChatMessage(msg, getChannel())
     end)
     btnRoll2:SetScript("OnEnter", function() self:ShowInfoPopup( "MS Roll") end)
     btnRoll2:SetScript("OnLeave", self.HideInfoPopup)
@@ -356,7 +364,7 @@ function LootMasterML:GetFrame()
 	local btnRoll3 = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	btnRoll3:SetScript("OnClick", function()
 			local msg = "Free Roll for: "..frame.currentLoot.link
-			SendChatMessage(msg, "RAID_WARNING")
+			SendChatMessage(msg, getChannel())
     end)
     btnRoll3:SetScript("OnEnter", function() self:ShowInfoPopup( "Free Roll") end)
     btnRoll3:SetScript("OnLeave", self.HideInfoPopup)
@@ -378,7 +386,7 @@ function LootMasterML:GetFrame()
 	btnRoll4:SetHeight(25)
 	btnRoll4:SetWidth(120)
 	btnRoll4:SetText("Roll (1-100)")
-    frame.btnRoll3 = btnRoll3;
+    frame.btnRoll4 = btnRoll4;
 	
 	local btnListErrors = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	btnListErrors:SetScript("OnClick", function()
@@ -619,12 +627,22 @@ function LootMasterML:DisplayLoot( item )
     else
         self.frame.btnAnnounce:Hide();
     end
-
+	
     if data.mayDistribute then
         self.frame.tbGPValueFrame:Show();
         self.frame.lblGPOverride:Show();
         self.frame.lblNoDistribute:Hide();
+		self.frame.btnGuild:Show();
+        self.frame.btnRoll2:Show();
+        self.frame.btnRoll3:Show();
+		self.frame.btnRoll4:Show();
+        self.frame.btnListErrors:Show();
     else
+		self.frame.btnGuild:Hide();
+        self.frame.btnRoll2:Hide();
+        self.frame.btnRoll3:Hide();
+		self.frame.btnRoll4:Hide();
+        self.frame.btnListErrors:Hide();
         self.frame.tbGPValueFrame:Hide();
         self.frame.lblGPOverride:Hide();
         self.frame.lblNoDistribute:Show();
