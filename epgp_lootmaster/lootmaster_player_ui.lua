@@ -477,9 +477,9 @@ function LootMaster:UpdateLootUI()
         if data.gpvalue2 and data.gpvalue2~='' then
             gp = gp .. format(' or %s', data.gpvalue2)
         end
-        --if data.gpvalue_greed and data.gpvalue_greed~='' then
-        --    gp = gp .. format(' (greed GP: %s)', data.gpvalue_greed)
-        --end
+        if data.gpvalue_manual and data.gpvalue_manual~='' then
+            gp = gp .. format(' (Manual GP: %s)', data.gpvalue_manual)
+        end
         
         if not data.notesAllowed then
             lootFrame.btnNote:Hide();

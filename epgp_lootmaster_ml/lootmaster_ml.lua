@@ -807,17 +807,11 @@ function LootMasterML:AskCandidateIfNeeded( link, candidate )
         self:SetCandidateResponse( loot.id, candidate, LootMaster.RESPONSE.INIT );
 
     end
-
-    local gpGreed = tonumber(loot.gpvalue) or 0
-    if LootMaster.db.profile.defaultOffspecGPValue then
-        local v = tonumber(LootMaster.db.profile.defaultOffspecGPValue) or 0
-        local p = LootMaster.db.profile.defaultOffspecGPPercentage
-        if p then
-            gpGreed = ceil(gpGreed /100 * v)
-        else
-            gpGreed = ceil(v)
-        end
-    end
+	
+    local gpManual = tonumber(loot.gpvalue_manual) or 0
+	if gpManual==tonumber(loot.gpvalue) or gpManual==0 then
+		gpManual=nil
+	end
 
     local notesAllowed = 0
     if LootMaster.db.profile.allowCandidateNotes then
@@ -835,7 +829,7 @@ function LootMasterML:AskCandidateIfNeeded( link, candidate )
                                             self.timeout or 60,
                                             loot.link,
                                             loot.texture or '',
-                                            gpGreed or -1,
+                                            gpManual or -1,
                                             notesAllowed,
                                             loot.classesEncoded or 0,
                                             loot.numButtons or 0,

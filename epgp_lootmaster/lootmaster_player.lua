@@ -57,8 +57,7 @@ function LootMaster:CommandReceived(prefix, message, distribution, sender)
 
 		-- Masterlooter wants to know from us if we'd like to have the item.
 		-- Lets show the gui and ask the player for input.
-
-		local itemID, gpvalue, ilevel, gpvalue2, binding, slot, quality, timeout, link, texture, gpGreed, notesAllowed, autoPassClassList, numButtons, buttons = strsplit("^", message)
+		local itemID, gpvalue, ilevel, gpvalue2, binding, slot, quality, timeout, link, texture, gpManual, notesAllowed, autoPassClassList, numButtons, buttons = strsplit("^", message)
 
     notesAllowed = ((tonumber(notesAllowed or 0) or 0) == 1)
 
@@ -116,8 +115,8 @@ function LootMaster:CommandReceived(prefix, message, distribution, sender)
         gpvalue2 = nil
     end
 
-    if gpGreed=='' or gpGreed==-1 or gpGreed=='-1' then
-        gpGreed = nil
+    if gpManual=='' or gpManual==-1 or gpManual=='-1' then
+        gpManual = nil
     end
 
     if not self:HasLoot(link) then
@@ -130,7 +129,7 @@ function LootMaster:CommandReceived(prefix, message, distribution, sender)
           ["ilevel"]          = ilevel,
           ["gpvalue"]         = gpvalue,
           ["gpvalue2"]        = gpvalue2,
-          ["gpvalue_greed"]   = gpGreed,
+          ["gpvalue_manual"]   = gpManual,
           ["binding"]         = binding,
           ["slot"]            = slot,
           ["texture"]         = texture,
