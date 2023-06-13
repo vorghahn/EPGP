@@ -388,6 +388,19 @@ function LootMasterML:GetFrame()
 	btnRoll4:SetText("Roll (1-100)")
     frame.btnRoll4 = btnRoll4;
 	
+	local btnHide = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	btnHide:SetScript("OnClick", function()
+			LootMasterML.Hide(LootMasterML)
+    end)
+    btnHide:SetScript("OnEnter", function() self:ShowInfoPopup( "Roll") end)
+    btnHide:SetScript("OnLeave", self.HideInfoPopup)
+	btnHide:SetPoint("TOP",btnAnnounce,"TOP",0,25)
+    btnHide:SetPoint("RIGHT",equipHeaderFrame,"LEFT",80,0)
+	btnHide:SetHeight(25)
+	btnHide:SetWidth(120)
+	btnHide:SetText("Hide Monitor")
+    frame.btnHide = btnHide;
+	
 	local btnListErrors = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	btnListErrors:SetScript("OnClick", function()
 			outputFunc = function(s) DEFAULT_CHAT_FRAME:AddMessage(s) end
@@ -414,7 +427,27 @@ function LootMasterML:GetFrame()
 
     mainframe:SetHeight( frame:GetHeight() )
     self:UpdateWidth()
+	if ElvUI then
+		local E, L, V, P, G = unpack(ElvUI)
+		local S = E:GetModule("Skins")
+		local AS = E:GetModule("AddOnSkins")
 
+		if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
+
+		local ipairs = ipairs
+		local select = select
+		local unpack = unpack
+
+		local GetItemQualityColor = GetItemQualityColor
+		local hooksecurefunc = hooksecurefunc
+
+		for i = 1, self.frame:GetNumChildren() do
+			local child = select(i, self.frame:GetChildren())
+			if child and child:IsObjectType("Button") then
+				S:HandleButton(child)
+			end
+		end
+	end	
     return self.frame
 end
 
@@ -642,6 +675,10 @@ function LootMasterML:DisplayLoot( item )
         self.frame.btnRoll2:Hide();
         self.frame.btnRoll3:Hide();
 		self.frame.btnRoll4:Hide();
+		self.frame.btnDiscard:SetScript("OnClick", function()
+			LootMasterML.Hide(LootMasterML)
+    end)
+		self.frame.btnHide:Hide();
         self.frame.btnListErrors:Hide();
         self.frame.tbGPValueFrame:Hide();
         self.frame.lblGPOverride:Hide();
