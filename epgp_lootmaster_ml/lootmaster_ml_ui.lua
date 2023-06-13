@@ -1411,10 +1411,14 @@ local instanceInfo = {
         ['Gundrak']                                 = '^0^5',
         ['Halls of Stone']                          = '^0^5',
         ['Halls of Lightning']                      = '^0^5',
+		['Halls of Reflection']                     = '^0^5',
         ['The Oculus']                              = '^0^5',
         ['Caverns of Time: Culling of Stratholme']  = '^0^5',
         ['Utgarde Pinnacle']                        = '^0^5',
         ['Trial of the Champion']                   = '^0^5',
+		['Pit of Saron']                   			= '^0^5',
+		['The Forge of Souls']                  	= '^0^5',
+		['The Nexus']                   			= '^0^5',
     },
     ['5-man heroic'] = {
         ['Utgarde Keep']                            = '^2^5',
@@ -1426,10 +1430,14 @@ local instanceInfo = {
         ['Gundrak']                                 = '^2^5',
         ['Halls of Stone']                          = '^2^5',
         ['Halls of Lightning']                      = '^2^5',
+		['Halls of Reflection']                     = '^2^5',
         ['The Oculus']                              = '^2^5',
         ['Caverns of Time: Culling of Stratholme']  = '^2^5',
         ['Utgarde Pinnacle']                        = '^2^5',
         ['Trial of the Champion']                   = '^2^5',
+		['Pit of Saron']                   			= '^2^5',
+		['The Forge of Souls']                  	= '^2^5',
+		['The Nexus']                   			= '^2^5',
     },
     ['10-man instances'] = {
         ['Naxxramas']                               = '^1^10',
@@ -1440,6 +1448,8 @@ local instanceInfo = {
         ['Trial of the Crusader']                   = '^1^10',
         ['Trial of the Crusader (Heroic)']          = '^2^10',
         ['Onyxia\'s Lair']                          = '^1^10',
+		['Icecrown Citadel']                		= '^1^10',
+		['The Ruby Sanctum']                        = '^1^10',
     },
     ['25-man instances'] = {
         ['Naxxramas']                               = '^2^25',
@@ -1450,6 +1460,8 @@ local instanceInfo = {
         ['Trial of the Crusader']                   = '^2^25',
         ['Trial of the Crusader (Heroic)']          = '^3^25',
         ['Onyxia\'s Lair']                          = '^2^25',
+		['Icecrown Citadel']                        = '^2^25',
+		['The Ruby Sanctum']                        = '^2^25',
     }
 }
 
