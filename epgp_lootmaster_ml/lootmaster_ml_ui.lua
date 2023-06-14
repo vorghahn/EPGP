@@ -398,7 +398,7 @@ function LootMasterML:GetFrame()
     btnHide:SetPoint("RIGHT",equipHeaderFrame,"LEFT",80,0)
 	btnHide:SetHeight(25)
 	btnHide:SetWidth(120)
-	btnHide:SetText("Hide Monitor")
+	btnHide:SetText("Hide Loot")
     frame.btnHide = btnHide;
 	
 	local btnListErrors = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
