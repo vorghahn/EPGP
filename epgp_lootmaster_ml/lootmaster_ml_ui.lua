@@ -2001,3 +2001,122 @@ function LootMasterML:ShowRaidInfoLookup()
     frame:Show();
 
 end
+
+
+function LootMaster:ShowDistFromBagFrame()
+    
+    local frame = self.bagframe;
+    
+    if not frame then    
+        frame = CreateFrame("Frame","LootMasterBagFrame",UIParent)
+		--#region Setup main masterlooter frame
+        frame:Hide();
+        frame:SetWidth(406)
+        frame:SetHeight(100)
+        frame:SetPoint("CENTER",UIParent,"CENTER",0,0)
+        frame:SetPoint("TOP",UIParent,"CENTER")
+        frame:EnableMouse()
+        frame:SetResizable()    
+        frame:SetMovable(true)
+        frame:SetFrameStrata("DIALOG")
+        frame:SetToplevel(true)
+        frame:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 64, edgeSize = 12,
+            insets = { left = 2, right = 1, top = 2, bottom = 2 }
+        })
+        frame:SetBackdropColor(1,1,0,1)
+        frame:SetBackdropBorderColor(1,1,1,0.2)
+
+        
+        frame:SetScript("OnMouseDown", function() frame:StartMoving() end)
+        frame:SetScript("OnMouseUp", function() frame:StopMovingOrSizing() end)
+        frame:SetScript("OnHide",frameOnClose)
+        --#endregion
+        
+        local titleFrame = CreateFrame("Frame", nil, frame)
+        --#region Setup main frame title
+        titleFrame:SetBackdrop({
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 64, edgeSize = 12,
+            insets = { left = 2, right = 1, top = 2, bottom = 2 }
+        })  
+        titleFrame:SetBackdropColor(0,0,0,1)
+        titleFrame:SetHeight(22)
+        titleFrame:EnableMouse()
+        titleFrame:SetResizable()    
+        titleFrame:SetMovable(true)
+        titleFrame:SetPoint("LEFT",frame,"TOPLEFT",20,0)
+        titleFrame:SetPoint("RIGHT",frame,"TOPRIGHT",-20,0)
+        
+        titleFrame:SetScript("OnMouseDown", function() frame:StartMoving() end)
+        titleFrame:SetScript("OnMouseUp", function() frame:StopMovingOrSizing() end)
+		
+        local titletext = titleFrame:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
+        titletext:SetPoint("CENTER",titleFrame,"CENTER",0,1)
+        titletext:SetText( string.format("EPGPLootMaster %s", self:GetVersionString() ) )
+        frame.titleFrame = titleFrame
+		
+        local lootFrame = CreateFrame("Button", nil, frame)
+        --#region Setup main frame title
+        lootFrame:SetBackdropColor(0,0,0,1)
+        lootFrame:SetWidth(406)
+        lootFrame:SetHeight(80)
+        lootFrame:EnableMouse()
+        lootFrame:SetResizable()    
+        lootFrame:SetMovable(true)
+        lootFrame:SetPoint("CENTER",frame,"CENTER")
+        lootFrame:SetScript("OnClick", function()
+				end)
+        frame.lootFrame = lootFrame
+		
+        --#endregion
+		
+        local lbldesc = frame:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
+        lbldesc:SetPoint("CENTER",frame,"CENTER")
+        lbldesc:SetVertexColor( 1, 1, 1 );
+        lbldesc:SetText( "Drag an item in inventory to start loot distribution process." )
+		frame.lbldesc = lbldesc
+       
+        local btnClose= CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	    btnClose:SetScript("OnClick", function()
+            frame:Hide();
+        end)
+        btnClose:SetPoint("RIGHT",frame,"RIGHT",-10,0)
+        btnClose:SetPoint("TOP",frame,"TOP",0,-10)
+        btnClose:SetHeight(25)
+        btnClose:SetWidth(100)
+        btnClose:SetText("Close")
+		
+        frame.btnClose = btnClose
+		self.bagframe = frame;
+
+    end
+  	if ElvUI then
+		local E, L, V, P, G = unpack(ElvUI)
+		local S = E:GetModule("Skins")
+		local AS = E:GetModule("AddOnSkins")
+
+		if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
+
+		local ipairs = ipairs
+		local select = select
+		local unpack = unpack
+
+		local GetItemQualityColor = GetItemQualityColor
+		local hooksecurefunc = hooksecurefunc
+		--frame.btnClose:SetText("")    
+		frame.btnClose:SetPoint("RIGHT",frame,"RIGHT",0,0)
+		frame:SetTemplate("Transparent")
+		--frame.lootFrame:SetTemplate("Transparent")
+		frame.titleFrame:SetTemplate("Default")
+		--frame.lbldesc:SetTemplate("Default")
+		S:HandleButton(frame.btnClose)
+	end
+	frame:SetFrameStrata("BACKGROUND")
+	frame.btnClose:SetFrameStrata("DIALOG")
+    frame:Show();
+    
+end
