@@ -15,7 +15,7 @@ local dVersion 	    = "2023-05-19T05:41:40Z"
 -- use iVersion to prompt users to update their addon
 local iVersion	    = 19
 --use iVersionML to prompt Officers to update their addon
-local iVersionML	  = 21
+local iVersionML	  = 22
 local _G            = _G
 
 local debug         = false
