@@ -2153,7 +2153,7 @@ function EPGP_DFB_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5)
 	if event == "ITEM_LOCKED" then
 		EPGP:Print("ITEM_LOCKED")
 		EPGP:Print(arg1,arg2)
-		if LootMasterBagFrame:IsShown() then
+		if LootMasterBagFrame and LootMasterBagFrame:IsShown() then
 			if arg2 ~= nil then  -- not equipment items
 				dfb_frameName = "LootMasterBagFrame"
 				LootMasterBagFrame.lootFrame:SetScript("OnClick", function()
