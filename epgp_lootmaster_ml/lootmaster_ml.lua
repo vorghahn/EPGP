@@ -2237,13 +2237,13 @@ do
 		"\n\nExample for a main with two out of guild alts and a main with only one:\n-EPGP_ALTS-\nFreyilius;Norliena/hu;Deviliena/de\nGrebbz;Heilo/sh\n-EPGP_ALTS-"..
 		"\n\nOfficer note format for a main is:\n EP,GP[;OOG_ALT_NAME/CLASS_ABBREV]"..
 		"\n\nExample for a main with an out of guild alt:\n0,0;Norliena/hu"..
-		"\n\nExample for Main with no out of guild alts:\n0,0\n\n"..
-		"\nOfficer note format for an alt is:\n MAIN_NAME"..
-		"\n\nExample for an in guild alt:\nGrebbz\n\n"..
-		"\n\n Class abreviation table:"..
-		"\nde=DEATHKNIGHT,\nDEATHKNIGHT=DEATHKNIGHT,\ndr=DRUID,\nDRUID=DRUID,\nhu=HUNTER,\nHUNTER=HUNTER,"..
-		"\nma=MAGE,\nMAGE=MAGE,\npa=PALADIN,\nPALADIN=PALADIN,\npr=PRIEST,\nPRIEST=PRIEST,\nro=ROGUE,\nROGUE=ROGUE,"..
-		"\nsh=SHAMAN,\nSHAMAN=SHAMAN,\nlo=WARLOCK,\nWARLOCK=WARLOCK,\nwa=WARRIOR,\nWARRIOR=WARRIOR\n",
+		"\n\nExample for Main with no out of guild alts:\n0,0"..
+		"\n\nOfficer note format for an alt is:\n MAIN_NAME"..
+		"\n\nExample for an in guild alt:\nGrebbz"..
+		"\n\nClass abreviation table:"..
+		"\nde=DEATHKNIGHT\ndr=DRUID\nhu=HUNTER"..
+		"\nma=MAGE\npa=PALADIN\npr=PRIEST\nro=ROGUE"..
+		"\nsh=SHAMAN\nlo=WARLOCK\nwa=WARRIOR",
 		button1 = OKAY,
 		OnAccept = function() end,
 		timeout = 0,
