@@ -18,6 +18,9 @@ local mathRandom            = math.random
 local mathFloor             = math.floor
 local mathCachedRandomSeed  = math.random()*1000
 
+EPGP_DFB_BagId = ''
+EPGP_DFB_SlotId = ''
+
 StaticPopupDialogs["TRADE_SUCCESS"] = {
 	text = "Click YES to confirm item has been traded so that GP can be adjusted.",
 	--text = "%s",
@@ -2157,6 +2160,8 @@ function EPGP_DFB_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5)
 				LootMasterBagFrame.lootFrame:SetScript("OnClick", function()
 					_, _, _, _, _, _, itemLink = GetContainerItemInfo(arg1, arg2)
 					if itemLink then
+						EPGP_DFB_BagId = arg1
+						EPGP_DFB_SlotId = arg2
 						LootMasterML:EPGP_DFB_LootFrame_Update(itemLink)
 					end
 					ClearCursor()
