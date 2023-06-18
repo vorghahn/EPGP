@@ -669,31 +669,16 @@ function LootMasterML:DisplayLoot( item )
         self.frame.btnRoll2:Show();
         self.frame.btnRoll3:Show();
 		self.frame.btnRoll4:Show();
-        self.frame.btnListErrors:Show();
     else
 		self.frame.btnGuild:Hide();
         self.frame.btnRoll2:Hide();
         self.frame.btnRoll3:Hide();
 		self.frame.btnRoll4:Hide();
-		self.frame.btnDiscard:SetScript("OnClick", function()
-			LootMasterML.Hide(LootMasterML)
-    end)
-		self.frame.btnHide:Hide();
-        self.frame.btnListErrors:Hide();
         self.frame.tbGPValueFrame:Hide();
         self.frame.lblGPOverride:Hide();
         self.frame.lblNoDistribute:Show();
         self.frame.lblNoDistribute:SetText( format("** MONITORING ** Only %s may distribute this item **", tostring(data.lootmaster)) )
     end
-	if data.fake then
-		self.frame.btnListErrors:Show();
-		self.frame.btnDiscard:SetScript("OnClick", function()
-            if frame.currentLoot then
-                self:RemoveLoot( frame.currentLoot.id );
-            end
-            self:UpdateUI();
-		end)
-	end
 
     --[[if data.hideResponses and data.announced then
       print('hiding responses for', data.link, data.announced)
