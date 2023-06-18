@@ -687,6 +687,12 @@ function LootMasterML:DisplayLoot( item )
     end
 	if data.fake then
 		self.frame.btnListErrors:Show();
+		self.frame.btnDiscard:SetScript("OnClick", function()
+            if frame.currentLoot then
+                self:RemoveLoot( frame.currentLoot.id );
+            end
+            self:UpdateUI();
+		end)
 	end
 
     --[[if data.hideResponses and data.announced then
