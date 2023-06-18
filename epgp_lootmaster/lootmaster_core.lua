@@ -369,6 +369,48 @@ function LootMaster:SlashHandler( input )
                 LootMasterML.Show(LootMasterML)
             end
         end
+		
+	elseif command=='parse' then
+
+        if LootMasterML then
+			ml = LootMasterML;
+			lootLink = "\124cffffffff\124Hitem:6948:0:0:0:0:0:0:0:0\124h[Hearthstone]\124h\124r"
+			local loot = ml.GetLoot(ml, lootLink);
+			local added = false
+			if not loot then
+				local lootID = ml.AddLoot(ml, lootLink, false);
+				loot = ml.GetLoot(ml, lootID);
+				loot.announced = true;
+				loot.manual = true;
+				loot.fake = true;
+				added = true;
+			end
+						
+			local num = GetNumRaidMembers()
+			local name = nil;
+			if num>0 then
+				-- we're in raid
+				for i=1, num do
+					name = GetRaidRosterInfo(i)
+					ml.AddCandidate(ml, loot.id, name)
+				end
+			else
+				num = GetNumPartyMembers()
+				for i=1, num do
+					name = UnitName('party'..i)
+					ml.AddCandidate(ml, loot.id, name)
+				end
+				ml.AddCandidate(ml, loot.id, UnitName('player'))
+			end
+
+			--[[if added then
+				ml.SendCandidateListToMonitors(ml, loot.id)
+			end--]]
+
+			ml.ReloadMLTableForLoot( ml, loot.link )
+            --ml.FakeReloadMLTableForLoot( ml, itemLink)
+        end
+
 
     elseif command=='emulate' then
 
@@ -524,6 +566,7 @@ function LootMaster:SlashHandler( input )
         self:Print( '/lm add [itemlink]: Manually add an item to the Master Looter UI' )
         self:Print( '/lm announce [itemlink]: Manually add an item and announce it to your group.' )
 		self:Print( '/lm bag: Opens a window that allows looting from bags.' )
+		self:Print( '/lm parse: Creates a fake loot monitor for checking character EPGP errors pre-raid.' )
 
 	end
 end

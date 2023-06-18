@@ -2320,6 +2320,12 @@ do
 				UIDropDownMenu_AddButton(info, level)
 				wipe(info)
 				
+				info.text = "Fake Monitor"
+				info.notCheckable = 1
+				info.func = function() LootMaster:SlashHandler( "parse" ) end
+				UIDropDownMenu_AddButton(info, level)
+				wipe(info)
+				
 			end
 		end
 		ToggleDropDownMenu(1, nil, addonMenu, LootMasterML_MINIMAP_GUI, 0, 0)

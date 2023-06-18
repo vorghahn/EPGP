@@ -685,6 +685,9 @@ function LootMasterML:DisplayLoot( item )
         self.frame.lblNoDistribute:Show();
         self.frame.lblNoDistribute:SetText( format("** MONITORING ** Only %s may distribute this item **", tostring(data.lootmaster)) )
     end
+	if data.fake then
+		self.frame.btnListErrors:Show();
+	end
 
     --[[if data.hideResponses and data.announced then
       print('hiding responses for', data.link, data.announced)
