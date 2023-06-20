@@ -55,7 +55,7 @@
         </Texture>
       </Layer>
       <Layer level="ARTWORK">
-        <FontString name="$parent_titlet" font="Fonts\MORPHEUS.ttf" justifyH="CENTER" justifyV="TOP" text="EPGP">
+        <FontString name="$parent_titlet" font="GameFontNormal" justifyH="CENTER" justifyV="TOP" text="EPGP">
           <Color r="1" g="1" b="1" a="1"/>
           <FontHeight>
             <AbsValue val="15"/>
@@ -188,7 +188,7 @@
               </Offset>
             </Anchor>
           </Anchors>
-          <FontString name="$parent_titlet" font="Interface\AddOns\QDKP_V2\Misc\Elronmonospace.ttf" justifyH="LEFT" justifyV="TOP" text="EPGP">
+          <FontString name="$parent_titlet" font="Interface\AddOns\epgp\Misc\Elronmonospace.ttf" justifyH="LEFT" justifyV="TOP" text="EPGP">
             <Color r="1" g="1" b="1" a="1"/>
             <FontHeight>
               <AbsValue val="10"/>
