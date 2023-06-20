@@ -224,6 +224,16 @@ GuildExport.Columns={
 			ep, gp, main = EPGP:GetEPGP(name)
 			return gp
 		end,
+	},
+	{
+		header = "PR",
+		xmlHeader="pr",
+		width = 9,
+		query = function(name)
+			ep, gp, main = EPGP:GetEPGP(name)
+			exact = ep/gp
+			return tonumber(string.format("%.3f", exact))
+		end,
 	}
 }
 
