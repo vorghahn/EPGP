@@ -2,7 +2,9 @@
 	LootMaster player/candidate Stuff
 ]]--
 local lm 	= LootMaster		-- Local instance of the addon
-
+local temp_report = ''
+local last_report = ''
+local temp_report_status = 0
 function LootMaster:Debug( message, verbose )
     if not self.debug then return end;
     if verbose and not self.verbose then return end;
@@ -52,6 +54,29 @@ function LootMaster:CommandReceived(prefix, message, distribution, sender)
 	local _,_,command, message = string.find(message, "^([%a_]-):(.*)$")
 	command = strupper(command or '');
 	message = message or '';
+	if command == 'REPORT' then
+		if message == 'REPORT_START' then
+			self:Print("Receiving EPGP report, please wait. This could take up to a minute for a large guild report.")
+			temp_report_status = 1
+			temp_report = string.format('EPGP Report received from %s\n', sender)
+		elseif message == 'REPORT_END' then
+			--self:Print("Report ended")
+			temp_report_status = 0
+			last_report = temp_report
+			EPGP_OpenCopyWindow(last_report,false)
+			temp_report = ''
+		else
+			if temp_report_status == 1 then
+				formt_msg = message:gsub("\\","|")
+				formt_msg = formt_msg:gsub("+"," ")
+				formt_msg = formt_msg:gsub("\n","")
+				formt_msg = formt_msg:gsub("~","\n")
+				temp_report = temp_report .. formt_msg
+			else
+				self:Print("Report issue to author")
+			end
+		end
+	end
 
 	if command == 'DO_YOU_WANT' then
 

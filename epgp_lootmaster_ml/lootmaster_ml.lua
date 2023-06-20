@@ -181,6 +181,23 @@ function LootMasterML:PostEnable()
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID",    	LootMasterML.ChatFrameFilter)
 end
 
+local function split(str, max_line_length)
+   local lines = {}
+   local line
+   str:gsub('(%s*)(%S+)', 
+      function(spc, word) 
+         if not line or #line + #spc + #word > max_line_length then
+            table.insert(lines, line)
+            line = word
+         else
+            line = line..spc..word
+         end
+      end
+   )
+   table.insert(lines, line)
+   return lines
+end
+
 function LootMasterML:HandleEPGPCommand(command, message, sender, event)
 
     local preventMonitorUpdate = false;
@@ -189,6 +206,26 @@ function LootMasterML:HandleEPGPCommand(command, message, sender, event)
     if command=='STANDBY' then
         -- dont handle this message, let EPGP handle it.
         return false;
+    end
+	
+	if command=='REPORT' then
+        -- dont handle this message, let EPGP handle it.
+		--EPGP:EPGP_Export_Popup("raid")
+		Text=EPGP_Export("raid","text")
+		leng = string.len(Text)
+		--self:Print("Length is ", leng)
+		return_text = Text:gsub("|","\\")
+		return_text = return_text:gsub(" ","+")
+		return_text = return_text:gsub("\n","~")
+		self:SendCommMessage("EPGPLootMasterC", format("%s:%s", tostring(command), tostring("REPORT_START")), "WHISPER", sender, "ALERT")
+		local st = split(return_text,200)
+		for _,v in ipairs(st) do
+		   --self:Print(v)
+		   self:SendCommMessage("EPGPLootMasterC", format("%s:%s", tostring(command), tostring(v)), "WHISPER", sender, "ALERT")
+		end
+		self:SendCommMessage("EPGPLootMasterC", format("%s:%s", tostring(command), tostring("REPORT_END")), "WHISPER", sender, "ALERT")
+		
+        return true;
     end
 
     if command=='PAS' or command=='PASS' or command=='NEED' or command=='GREED' or command=='MAJOR' or command=='MINOR' or command=='OS' and message~='' then
