@@ -2180,7 +2180,6 @@ function LootMasterML:LootHandler(loot_slot_number, instant)
 end
 	
 function LootMasterML:EPGP_DFB_slasher()
-	EPGP:Print("Slasher triggered")
 	if not LootMasterBagFrame then
 		LootMaster:ShowDistFromBagFrame()
 		--OpenAllBags()
@@ -2194,7 +2193,6 @@ function LootMasterML:EPGP_DFB_slasher()
 end
 
 function LootMasterML:EPGP_Auto_Bags()
-	EPGP:Print("Slasher triggered")
 	if LootMaster.db.profile.auto_bag then
 		if not LootMasterBagFrame then
 			LootMaster:ShowDistFromBagFrame()
