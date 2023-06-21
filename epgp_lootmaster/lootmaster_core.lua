@@ -111,7 +111,8 @@ function LootMaster:OnInitialize()
         audioWarningOnSelection = true,
 		map_btn = true,
 		instantLoot = true,
-        use_epgplootmaster = 'ask'
+        use_epgplootmaster = 'ask',
+		auto_bag = false
       }
     })
 

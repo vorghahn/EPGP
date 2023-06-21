@@ -142,24 +142,24 @@ local function fullOptions()
                             name = "Ignore Updates",
                             desc = "Prevent notifications to update this addon.",
                         },
+												
+						auto_bag = {
+                            type = "toggle",
+                            order = 23,
+                            width = 'full',
+                            name = "Open Distribution from bags window automatically.",
+                            desc = "Automatically open the Lootmaster Bag Distibution window when opening your bags.",
+                        },
 						
 						map_btn = {
                             type = "execute",
-                            order = 23,
+                            order = 24,
                             name = "Toggle Minimap Button",
                             desc = "Toggle the display the minimap button.",
 							func = function(info)
                                 LootMasterML:ToggleMinimapButton()
                             end,
                         },
-						--[[
-						elvui = {
-                            type = "toggle",
-                            order = 24,
-                            width = 'full',
-                            name = "Elvui Skin",
-                            desc = "Certain frames will not automatically change to the ELVUI theme.",
-                        },--]]
 						
 						btnVersionCheck = {
 						  order = 25,

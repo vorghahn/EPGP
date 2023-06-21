@@ -78,6 +78,9 @@ function LootMasterML:OnInitialize()
     -- Trap even when an items get looted
     self:RegisterEvent("CHAT_MSG_LOOT");
     self:RegisterEvent("LOOT_OPENED");
+	
+	-- Trap bag change for auto opening of DFB
+	self:SecureHook("ToggleBackpack", "EPGP_Auto_Bags")
 
     -- Trap some important system messages here
     self:RegisterEvent("RAID_ROSTER_UPDATE",            "GROUP_UPDATE");
@@ -2175,19 +2178,33 @@ function LootMasterML:LootHandler(loot_slot_number, instant)
 		end;
 	end
 end
-
+	
 function LootMasterML:EPGP_DFB_slasher()
+	EPGP:Print("Slasher triggered")
 	if not LootMasterBagFrame then
 		LootMaster:ShowDistFromBagFrame()
-		OpenAllBags()
+		--OpenAllBags()
 	elseif LootMasterBagFrame and not LootMasterBagFrame:IsShown() then
 		LootMaster:ShowDistFromBagFrame()
-		OpenAllBags()
+		--OpenAllBags()
 	else
-		LootMasterBagFrame:Hide() 
+		LootMasterBagFrame:Hide()
+		--CloseAllBags()
 	end
 end
 
+function LootMasterML:EPGP_Auto_Bags()
+	EPGP:Print("Slasher triggered")
+	if LootMaster.db.profile.auto_bag then
+		if not LootMasterBagFrame then
+			LootMaster:ShowDistFromBagFrame()
+		elseif LootMasterBagFrame and not LootMasterBagFrame:IsShown() then
+			LootMaster:ShowDistFromBagFrame()
+		else
+			LootMasterBagFrame:Hide()
+		end
+	end
+end
 
 function EPGP_DFB_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5)
 	if event == "ITEM_LOCKED" then
