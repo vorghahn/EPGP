@@ -152,14 +152,14 @@ local function fullOptions()
                                 LootMasterML:ToggleMinimapButton()
                             end,
                         },
-						
+						--[[
 						elvui = {
                             type = "toggle",
                             order = 24,
                             width = 'full',
                             name = "Elvui Skin",
                             desc = "Certain frames will not automatically change to the ELVUI theme.",
-                        },
+                        },--]]
 						
 						btnVersionCheck = {
 						  order = 25,
