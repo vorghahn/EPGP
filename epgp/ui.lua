@@ -913,16 +913,19 @@ local function AddEPControls(frame, withRecurring)
 		if ElvUI then
 			local E, L, V, P, G = unpack(ElvUI)
 			local S = E:GetModule("Skins")
-			local AS = E:GetModule("AddOnSkins")
+			
+			if E:GetModule("AddOnSkins", true) then
+				local AS = E:GetModule("AddOnSkins")
 
-			if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
+				if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
 
-			local ipairs = ipairs
-			local select = select
-			local unpack = unpack
-			S:HandleCheckBox(offline_chk)
-			S:HandleCheckBox(outofzone_chk)
-		end	
+				local ipairs = ipairs
+				local select = select
+				local unpack = unpack
+				S:HandleCheckBox(offline_chk)
+				S:HandleCheckBox(outofzone_chk)
+			end	
+		end
   end
 
   frame:SetHeight(

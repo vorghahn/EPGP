@@ -430,21 +430,23 @@ function LootMasterML:GetFrame()
 	if ElvUI then
 		local E, L, V, P, G = unpack(ElvUI)
 		local S = E:GetModule("Skins")
-		local AS = E:GetModule("AddOnSkins")
+		if  E:GetModule("AddOnSkins", true) then
+			local AS = E:GetModule("AddOnSkins")
 
-		if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
+			if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
 
-		local ipairs = ipairs
-		local select = select
-		local unpack = unpack
+			local ipairs = ipairs
+			local select = select
+			local unpack = unpack
 
-		local GetItemQualityColor = GetItemQualityColor
-		local hooksecurefunc = hooksecurefunc
+			local GetItemQualityColor = GetItemQualityColor
+			local hooksecurefunc = hooksecurefunc
 
-		for i = 1, self.frame:GetNumChildren() do
-			local child = select(i, self.frame:GetChildren())
-			if child and child:IsObjectType("Button") then
-				S:HandleButton(child)
+			for i = 1, self.frame:GetNumChildren() do
+				local child = select(i, self.frame:GetChildren())
+				if child and child:IsObjectType("Button") then
+					S:HandleButton(child)
+				end
 			end
 		end
 	end	
@@ -2091,23 +2093,25 @@ function LootMaster:ShowDistFromBagFrame()
   	if ElvUI then
 		local E, L, V, P, G = unpack(ElvUI)
 		local S = E:GetModule("Skins")
-		local AS = E:GetModule("AddOnSkins")
+		if  E:GetModule("AddOnSkins", true) then
+			local AS = E:GetModule("AddOnSkins")
 
-		if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
+			if not AS:IsAddonLODorEnabled("EPGP_LootMaster") then return end
 
-		local ipairs = ipairs
-		local select = select
-		local unpack = unpack
+			local ipairs = ipairs
+			local select = select
+			local unpack = unpack
 
-		local GetItemQualityColor = GetItemQualityColor
-		local hooksecurefunc = hooksecurefunc
-		--frame.btnClose:SetText("")    
-		frame.btnClose:SetPoint("RIGHT",frame,"RIGHT",0,0)
-		frame:SetTemplate("Transparent")
-		--frame.lootFrame:SetTemplate("Transparent")
-		frame.titleFrame:SetTemplate("Default")
-		--frame.lbldesc:SetTemplate("Default")
-		S:HandleButton(frame.btnClose)
+			local GetItemQualityColor = GetItemQualityColor
+			local hooksecurefunc = hooksecurefunc
+			--frame.btnClose:SetText("")    
+			frame.btnClose:SetPoint("RIGHT",frame,"RIGHT",0,0)
+			frame:SetTemplate("Transparent")
+			--frame.lootFrame:SetTemplate("Transparent")
+			frame.titleFrame:SetTemplate("Default")
+			--frame.lbldesc:SetTemplate("Default")
+			S:HandleButton(frame.btnClose)
+		end
 	end
 	frame:SetFrameStrata("BACKGROUND")
 	frame.btnClose:SetFrameStrata("DIALOG")
