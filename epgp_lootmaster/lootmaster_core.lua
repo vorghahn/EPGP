@@ -13,9 +13,9 @@ local addon         = LootMaster		-- Local instance of the addon
 local version       = tostring(GetAddOnMetadata('epgp_lootmaster', 'Version')) or 'development'
 local dVersion 	    = "2023-05-19T05:41:40Z"
 -- use iVersion to prompt users to update their addon
-local iVersion	    = 24
+local iVersion	    = 25
 --use iVersionML to prompt Officers to update their addon
-local iVersionML	  = 24
+local iVersionML	  = 25
 local _G            = _G
 
 local debug         = false
